@@ -4,7 +4,7 @@ labbook is an R package meant to make maintaining a digital lab book easier, gen
 ## Installation
 The easiest way to install the package is to install the [devtools](https://devtools.r-lib.org) package and run `install_github`:
 
-```R
+```r
 devtools::install_github(
     repo   = "shwilks/labbook",
     subdir = "labbook"
@@ -15,7 +15,7 @@ devtools::install_github(
 ### Initiate a labbook
 To initiate a new labbook, use `labbook.init()`, specifying a parent directory, a lab book title and name for the first project that will be created. By default the lab book is created in a directory called "labbook", but this folder can be safely renamed.
 
-```R
+```r
 # Intiate a new labbook on the desktop with a first project
 labbook.init(
     labbook.dir   = "~/Desktop",
@@ -27,7 +27,7 @@ labbook.init(
 ### Create a new page
 Once inside a labbook project you can create a new page using `labbook.newPage()` which will simply create a new file inside the project's `code/` directory with a basic skeleton. You could also simply create a new R code file yourself in the `code/` directory and write your own scaffold each time.
 
-```R
+```r
 labbook.newPage("bcell_data_processing.R")
 ```
 
@@ -43,7 +43,7 @@ The function used to render a new page is `render.page()`. When run with no argu
 ### Initiate a new project
 To initiate a new project simply call `labbook.newProject()` from within any other open labbook project i.e.
 
-```R
+```r
 labbook.newProject("Antibody dynamics")
 ```
 
@@ -64,7 +64,7 @@ I found myself re-running the same code several times but with small alterations
 
 To indicate that a page is a new version simply include the `#' @X` tag, where `X` is the version number, i.e. `#' @2` or `#' @3.2`. The page header will then look something like this:
 
-```R
+```r
 ##' B cell dynamics
 ###' A simple B cell ODE model
 #' @2
@@ -74,5 +74,14 @@ To indicate that a page is a new version simply include the `#' @X` tag, where `
 Now when the file is rendered the index page will be updated appropriately and previous page versions will not be over-written.
 
 ### Rendering a standalone page
-The `render.page()` function can be called on a regular code file to 
+The `render.page()` function can be called on a regular code file to use knitr's neat capabilities to produce a standalone webpage, containing all necessary styles, images and code libraries.
+
+```r
+# Output a standalone labbook page to the desktop
+render.page(
+    codepath   = "code/b_cell_dynamic_model.R",
+    pagepath   = "~/Desktop/b_cell_dynamic_model.html",
+    standalone = TRUE
+)
+```
 
