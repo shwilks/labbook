@@ -45,7 +45,7 @@ out.plot <- function(code, fig_width=5, fig_height=7, inline=FALSE) {
         cat("</div>")
 
     } else {
-        code
+        print(code)
     }
 }
 
@@ -119,7 +119,18 @@ out.tab <- function(label, x){
 
 }
 
+#' @export
+out.div <- function(...){
 
+    if(knitting()){
+        cat("<div class='flex-row'>")
+        list(...)
+        cat("</div>")
+    } else {
+        list(...)
+    }
+    invisible(NULL)
 
+}
 
 
