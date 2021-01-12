@@ -5,10 +5,7 @@ labbook is an R package meant to make maintaining a digital lab book easier, gen
 The easiest way to install the package is to install the [devtools](https://devtools.r-lib.org) package and run `install_github`:
 
 ```r
-devtools::install_github(
-    repo   = "shwilks/labbook",
-    subdir = "labbook"
-)
+devtools::install_github("shwilks/labbook")
 ```
 
 ## Usage
