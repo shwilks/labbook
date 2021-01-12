@@ -15,14 +15,15 @@ library(labbook)
 
 plot(cars)
 
-#' You have to be a bit careful because text output to the console is output "as is" to the html
-#' page.
+#' Any text that is output from your code is hidden by default but will be shown when you toggle
+#' the "Show inline code" on the page
 #'
 #' For example:
 
 cat("### A subheading")
 
-#' If you want to print some output in an output block (hidden by default) you can use the `out()` function.
+#' If you want to print something directly to the webpage to be interpreted as is (for example a
+#' programatically generated heading) you can use the `out` function.
 
 out("### A subheading")
 
