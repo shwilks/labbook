@@ -168,7 +168,7 @@ render.page <- function(
     }
 
     # Update the index page
-    if(add_index_link){
+    if(add_index_link && !standalone){
 
         if(verbose) message("Updating index page...", appendLF = FALSE)
         addIndexPageLink(
