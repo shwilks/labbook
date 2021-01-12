@@ -140,6 +140,24 @@ test_that("Render a fourth page", {
 })
 
 
+# Render the example page
+test_that("Render the example page", {
+
+  example.path  <- system.file("examples/example_page.R", package = "labbook")
+  codefile.path <- file.path(labbook.path, "projects", "first_project", "code", "main_example_page.R")
+
+  file.copy(
+    from = example.path,
+    to   = codefile.path
+  )
+
+  render.page(codefile.path, openpage = FALSE)
+  expect_true(file.exists(example.path))
+  expect_true(file.exists(codefile.path))
+
+})
+
+
 
 # Render a stand-alone page
 test_that("Render a standalone page", {
@@ -166,37 +184,7 @@ test_that("Render a standalone page", {
 })
 
 
-# Test versioning
-test_that("Page versioning", {
-
-  # Version 2
-  example.path  <- testthat::test_path(file.path("..", "testdata", "example4_v2.R"))
-  codefile.path <- file.path(labbook.path, "projects", "first_project", "code", "example4_v2.R")
-
-  file.copy(
-    from = example.path,
-    to   = codefile.path
-  )
-
-  render.page(codefile.path, openpage = FALSE)
-
-  # Version 3
-  example.path  <- testthat::test_path(file.path("..", "testdata", "example4_v3.R"))
-  codefile.path <- file.path(labbook.path, "projects", "first_project", "code", "example4_v3.R")
-
-  file.copy(
-    from = example.path,
-    to   = codefile.path
-  )
-
-  render.page(codefile.path, openpage = FALSE)
-
-  expect_true(file.exists(example.path))
-  expect_true(file.exists(codefile.path))
-
-})
-
-
-
+# Cleanup
+unlink(testthat::test_path(file.path("..", "testoutput", "labbook")), recursive = TRUE)
 
 
