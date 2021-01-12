@@ -1,0 +1,205 @@
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.main-title {
+    font-weight: lighter;
+    padding-top: 38px;
+    padding-bottom: 12px;
+    margin-left: 40px;
+    text-align: left;
+    font-size: 52px;
+    color: #21385B;
+}
+
+.sub-title, #archive:before, #project-index {
+    padding: 20px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: #21385B;
+    font-size: 24px;
+    font-weight: lighter;
+    color: #FCFCFC;
+}
+
+#project-index:before {
+    content: "Projects";
+    font-weight: lighter;
+    display: block;
+    margin-bottom: 2px;
+}
+
+#project-index a {
+    display: inline-block;
+    font-size: 60%;
+    color: #ccc;
+    font-weight: lighter;
+    padding-right: 10px;
+    margin-right: 10px;
+    border-right: solid 1px #ccc;
+}
+
+#project-index a:hover {
+    color: #ffffff;
+}
+
+#project-index a:last-of-type {
+    border-right: none;
+}
+
+.project {
+    position: relative;
+    padding: 20px;
+    border-left-style: solid;
+    border-left-width: 16px;
+    border-left-color: hsl(221, 100%, 92%);
+    background-color: hsl(221, 100%, 97%);
+    margin: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.project .alt-page-version {
+    opacity: 0.4;
+    border-left: solid 8px hsl(221, 100%, 92%);
+    padding-left: 8px;
+    display: none;
+}
+
+.project .page-version-major,
+.project .page-version-minor {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    right: 0;
+    color: #10ba1c;
+    border: solid 1.5px #10ba1c;
+    padding-top: 0;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    padding-right: 2px;
+    border-radius: 4px;
+    font-size: 70%;
+}
+
+.project .page-version-major {
+    opacity: 0.6;
+}
+
+.project .page-version-major:hover {
+    opacity: 1;
+    border-color: #e50453;
+    color: #e50453;
+}
+
+.project .page-version-minor {
+    opacity: 0.2;
+    font-size: 60%;
+    top: 2px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    display: none;
+}
+
+.project:nth-of-type(even) {
+    border-left-color: hsl(0, 0%, 92%);
+    background-color: hsl(0, 0%, 97%);
+}
+
+.project h3 {
+    margin-top: 0;
+}
+
+.project h4 {
+    margin-top: 24px;
+}
+
+.project .todo {
+    position: absolute;
+    cursor: pointer;
+    top: 20px;
+    right: 20px;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    line-height: 24px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: solid 2px #000;
+    opacity: 0.2;
+}
+
+.project .todo:hover {
+    opacity: 1;
+    color: green;
+    border-color: green;
+}
+
+.hl_section {
+  background-color: hsl(120, 61%, 90%) !important;
+  border-left-color: hsl(120, 61%, 80%) !important;
+  border-left-width: 32px;
+  /* box-shadow: 2px 2px 8px 0 #aaa; */
+}
+
+#overall-todo {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+#overall-todo .overall-todo-badge {
+    display: inline-block;
+    cursor: pointer;
+    top: 20px;
+    right: 20px;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    line-height: 24px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: solid 2px #000;
+    opacity: 0.2;
+    box-shadow: 2px 2px 4px 0 #aaa;
+}
+
+#overall-todo .overall-todo-badge:hover {
+    opacity: 1;
+    color: green;
+    border-color: green;
+}
+
+#overall-todo .overall-todo-badge[title="Today"] {
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    font-size: 24px;
+    opacity: 0.8;
+    background-color: #adebad;
+    border-color: #2eb82e;
+}
+
+#overall-todo .overall-todo-badge[title="Today"]:hover {
+    background-color: #33cc33;
+    color: #000;
+    border-color: #000;
+}
+
+#archive:before {
+    display: block;
+    content: "Older pages";
+    font-size: 18px;
+    padding: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

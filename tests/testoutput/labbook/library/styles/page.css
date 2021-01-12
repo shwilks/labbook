@@ -1,0 +1,353 @@
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  padding: 20px;
+  min-height: 100vh;
+  position: relative;
+}
+
+.title {
+  margin-top: 18px;
+}
+
+/* Page header */
+#page-header {
+  background-color: rgb(63, 82, 131);
+  color: white;
+  padding: 12px;
+  padding-bottom: 8px;
+  font-size: 90%;
+  position: relative;
+}
+
+#page-header {
+  border-bottom: solid 4px rgb(54, 69, 111);
+}
+
+#page-header a {
+  color: lightblue;
+}
+
+#page-header a:hover {
+  color: cyan;
+  text-decoration: none;
+}
+
+/* Source code */
+.code-block code {
+  background-color: transparent;
+  padding: 0;
+}
+
+/* Code chunks */
+.headerlink {
+  display: block;
+  width: 100%;
+  padding: 4px;
+  left:  0;
+  right: 0;
+  top: 40px;
+  z-index: 100;
+  font-size: 70%;
+  font-weight: bold;
+  color: hsl(210, 30%, 60%);
+  border-left: solid 20px hsl(210, 30%, 70%);
+  cursor: pointer;
+  padding-left: 8px;
+  padding-right: 8px;
+  background-color: hsl(210, 50%, 90%);
+  background-image: linear-gradient(to right, hsl(210, 50%, 90%) , hsl(210, 50%, 98%));
+  box-sizing: border-box;
+}
+
+.headerlink:hover {
+  color: hsl(210, 30%, 40%);
+  border-left: solid 20px hsl(210, 30%, 50%);
+}
+
+/* Code download link */
+#code-download-link {
+  font-size: 70%;
+  font-weight: bold;
+  color: hsl(210, 30%, 60%);
+  position: relative;
+  display: block;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-bottom: -34px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-left: solid 20px hsl(210, 30%, 70%);
+  background-color: hsl(210, 50%, 90%);
+  background-image: linear-gradient(to right, hsl(210, 50%, 90%) , hsl(210, 50%, 98%));
+}
+
+#code-download-link:hover {
+  color: hsl(210, 30%, 40%);
+  border-left: solid 20px hsl(210, 30%, 50%);
+}
+
+#code-download-link:after {
+  display: block;
+  content: "(All loaded files can be found online, paths are relative to the project directory. Alternatively click on loaded files in the code below to download them directly)";
+  font-weight: lighter;
+}
+
+/* If a string is linked to a file */
+code .linked-string {
+  color: #4d4dff;
+}
+
+code .linked-string:hover {
+  color: #0099ff;
+  text-decoration: underline;
+}
+
+/* Code block */
+.code-block {
+  padding: 14px;
+  display: block;
+  overflow-x: auto;
+  margin-left: -18px;
+  padding-left: 18px;
+  padding-right: 18px;
+  width: 100vw;
+  background-color: #f8f8f8;
+  border-radius: 0;
+  margin-top: 42px;
+  margin-bottom: 42px;
+  box-sizing: border-box;
+}
+
+.code-block a {
+  white-space: pre;
+}
+
+.code-block a,
+.code-block a:hover {
+  color: inherit;
+}
+
+.source-code,
+.output-code,
+.message-code,
+.warning-code {
+  border-left-style: solid;
+  border-left-width: 60px;
+  padding-bottom: 24px;
+}
+
+.source-code {
+  border-color: #e3e3e3;
+}
+
+.output-code {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+}
+
+.output-code .hljs {
+  color: #0c5460;
+  background-color: #d1ecf1;
+}
+
+.message-code {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+}
+
+.message-code .hljs {
+  color: #856404;
+  background-color: #fff3cd;
+}
+
+.warning-code {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.warning-code .hljs {
+  color: #721c24;
+  background-color: #f8d7da;
+}
+
+/* Page code */
+.page-code {
+  border-color: #e3e3e3;
+  padding-left: 12px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  width: 100%;
+  margin-left: 0;
+  overflow: hidden;
+  cursor: default;
+}
+
+/* Page version */
+.page-version {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: inline-block;
+  font-size: 12px;
+  color: #10ba1c;
+  border: solid 1.5px #10ba1c;
+  border-radius: 6px;
+  padding: 4px;
+  text-align: center;
+}
+
+.page-version:before {
+  content: "version";
+  display: block;
+  font-size: 8px;
+}
+
+/* Code labels */
+.source-code:before,
+.output-code:before,
+.message-code:before,
+.warning-code:before {
+  display: block;
+  margin-bottom: 8px;
+  font-family: sans-serif;
+  font-size: 24px;
+  font-weight: bolder;
+}
+
+.source-code:before {
+  content: "In:";
+  color: #ccc;
+}
+
+.output-code:before {
+  content: "Out:";
+  color: hsl(188, 53%, 75%);
+}
+
+.message-code:before {
+  content: "Message:";
+  color: hsl(45, 53%, 75%);
+}
+
+.warning-code:before {
+  content: "Warning:";
+  color: hsl(354, 53%, 75%);
+}
+
+/* Style for when a character string links to a file */
+code .st a:hover {
+  text-decoration: underline;
+}
+
+/* Code output */
+.code-output {
+  display: none;
+}
+
+/* Collapsible div */
+.collapsible-div {
+  display: none;
+  border-left: solid #f6f6f6 10px;
+  padding-left: 18px;
+}
+
+.collapsible-div-toggle {
+  cursor: pointer;
+  margin-top: 6px;
+  margin-bottom: 18px;
+  display: inline-block;
+}
+
+.collapsible-div-pill {
+  color: #666;
+  background-color: #f3f3f3;
+  border-radius: 4px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  display: inline-block;
+}
+
+.collapsible-div-arrow {
+  color: #aaa;
+  display: inline-block;
+  width: 15px;
+  position: relative;
+  top: 2px;
+  left: 6px;
+  background-color: #f3f3f3;
+  padding: 2px;
+  padding-top: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
+  border-radius: 4px;
+}
+
+.collapsible-div-toggle:hover .collapsible-div-pill {
+  color: #444;
+  background-color: #e6e6e6;
+}
+
+.collapsible-div-toggle:hover .collapsible-div-arrow {
+  color: #777;
+  background-color: #e6e6e6;
+}
+
+/* Tabsets */
+.tab-panel {
+  /*border-bottom: solid 4px #eee;*/
+  border-left: solid #f6f6f6 20px;
+  background-image:linear-gradient(to left, #fff, #f6f6f6 800px);
+  font-weight: bolder;
+}
+
+/*.tab-panel:after {
+  height: 3px;
+  width: 100%;
+  padding-right: 200px;
+  box-sizing: content-box;
+  content: "";
+  background-color:#eee;
+  background-image:linear-gradient(to left, #fff, #eee 180px);
+}*/
+
+.tabset-div {
+  padding-left: 18px;
+  border-left: solid #f6f6f6 20px;
+}
+
+.tab-div {
+  margin-top: 20px;
+}
+
+.tab-panel .tabset-tab {
+  color: #999;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 12px;
+  padding-right: 12px;
+  margin-top: 12px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.tabset-tab.active {
+  background-color: #fff;
+  color: #666;
+}
+
+.tabset-tab:hover {
+  color: #444;
+}
+
