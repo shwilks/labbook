@@ -59,19 +59,6 @@ Lab book pages are styled and processed according to files kept in the `library/
 
 If you would like to edit the main `index.html` file you can freely do so, just be sure not to touch the `<section id="projects">...</section>` part since this is automatically maintained when new pages are rendered and assumes a certain format.
 
-### Page versioning
-I found myself re-running the same code several times but with small alterations or for example with additional data input. In these cases you don't necessarily want to lose the previous versions of the page that you made since often I found myself wanting to go back and check how the analyses I'd made the last week looked. However, you also don't want to clog-up your index page with many different versions of the same analyses. To address this, the lab book includes a rudimentary form of page versioning so that a new page version is rendered without over-writing the last one, and the index page is styled to hide previously made versions by default.
-
-To indicate that a page is a new version simply include the `#' @X` tag, where `X` is the version number, i.e. `#' @2` or `#' @3.2`. The page header will then look something like this:
-
-```r
-##' B cell dynamics
-###' A simple B cell ODE model
-#' @2
-#'
-```
-
-Now when the file is rendered the index page will be updated appropriately and previous page versions will not be over-written.
 
 ### Rendering a standalone page
 The `render.page()` function can be called on a regular code file to use knitr's neat capabilities to produce a standalone webpage, containing all necessary styles, images and code libraries.
