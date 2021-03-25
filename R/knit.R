@@ -77,8 +77,7 @@ out.table <- function(x, scale = 1, escape = TRUE, ...){
 
     if(knitting()){
         if(escape){
-          if(is.null(dim(x))) x <- gsub("*", "\\*", x, fixed = TRUE)
-          else                x <- apply(x, 2, gsub, pattern = "*", replacement = "\\*", fixed = TRUE)
+          x[] <- gsub("*", "\\*", x, fixed = TRUE)
         }
         out(sprintf("<div style='font-size:%s'>", paste0(scale*100, "%")))
         out(knitr::kable(x, format = "html", escape = escape, ...))
@@ -135,7 +134,7 @@ out.tab <- function(label, x){
 #' @export
 out.div <- function(...){
 
-    if(knitting()){
+    if(knitting()) {
         out("<div class='flex-row'>")
         list(...)
         out("</div>")
