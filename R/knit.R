@@ -62,7 +62,7 @@ out.plot <- function(code, fig_width=5, fig_height=7, out_height=NULL, out_width
 #' @export
 out <- function(...){
 
-    if(knitting()){
+    if (knitting()) {
         escape_output(...)
     } else {
         grey <- crayon::make_style("grey40")
@@ -75,9 +75,9 @@ out <- function(...){
 #' @export
 out.table <- function(x, scale = 1, escape = TRUE, ...){
 
-    if(knitting()){
-        if(escape){
-          x[] <- gsub("*", "\\*", x, fixed = TRUE)
+    if (knitting()) {
+        if (escape) {
+          x[] <- apply(x, 1:2, gsub, pattern = "*", replacement = "\\*", fixed = TRUE)
         }
         out(sprintf("<div style='font-size:%s'>", paste0(scale*100, "%")))
         out(knitr::kable(x, format = "html", escape = escape, ...))
