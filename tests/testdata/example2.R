@@ -1,6 +1,7 @@
 
 ##' Subtitle two
 ###' A second example page
+#' @tag1
 #'
 #' ## Aim
 #' This is the aim of the page and a plot:
