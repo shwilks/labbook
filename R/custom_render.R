@@ -49,7 +49,7 @@ labpage_render <- function(x, options, ...) {
     }
 
     # Call knit_print on the result
-    knitr::knit_print(x, ...)
+    knitr::knit_print(x, options = options, ...)
 
 }
 
