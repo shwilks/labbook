@@ -10,6 +10,7 @@ body {
 }
 
 p {
+    line-height: 1.4;
 }
 
 
@@ -28,11 +29,11 @@ a:hover {
 pre {
   border-style: none;
   background-color: #f8f8f8;
+  padding: 8px;
 }
 
 code {
   background-color: #f8f8f8;
-  padding: 4px;
   border-radius: 4px;
 }
 
@@ -59,7 +60,7 @@ h2 {
 }
 
 h3 {
-	font-size: 160%;
+	font-size: 140%;
 }
 
 h4 {
