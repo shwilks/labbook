@@ -8,7 +8,7 @@ knitting <- function(){
 #' @export
 div <- function(...){
 
-    if(knitting()){
+    if (knitting()) {
         cat("<div class='parent'>")
         list(...)
         cat("</div>")
@@ -24,7 +24,7 @@ out.plot <- function(code, fig_width=5, fig_height=7, out_height=NULL, out_width
     if(!is.null(out_width) && is.null(out_height)) out_height <- out_width*(fig_height/fig_width)
     if(is.null(out_width) && !is.null(out_height)) out_width  <- out_height*(fig_width/fig_height)
 
-    if(knitting()){
+    if (knitting()) {
         g_deparsed <- paste0("function(){ ", deparse(substitute(code, env = parent.frame())), "}")
 
         if(is.null(out_height)) out_height <- "NULL"
@@ -92,7 +92,7 @@ out.table <- function(x, scale = 1, escape = TRUE, ...){
 #' @export
 out.collapsible <- function(label, x){
 
-    if(knitting()){
+    if (knitting()) {
         out("<div class='collapsible-div' label='", label,"'>", sep = "")
         force(x)
         out("</div>")
@@ -106,7 +106,7 @@ out.collapsible <- function(label, x){
 #' @export
 out.tabset <- function(...){
 
-    if(knitting()){
+    if (knitting()) {
         out("<div class='tabset-div'>")
         list(...)
         out("</div>")
@@ -120,7 +120,7 @@ out.tabset <- function(...){
 #' @export
 out.tab <- function(label, x){
 
-    if(knitting()){
+    if (knitting()) {
         out("<div class='tab-div' label='", label,"'>", sep = "")
         force(x)
         out("</div>")
@@ -134,14 +134,97 @@ out.tab <- function(label, x){
 #' @export
 out.div <- function(...){
 
-    if(knitting()) {
-        out("<div class='flex-row'>")
+    if (knitting()) {
+        out("<div>")
         list(...)
         out("</div>")
     } else {
         list(...)
     }
     invisible(NULL)
+
+}
+
+#' @export
+out.flexdiv <- function(...){
+
+  if (knitting()) {
+    out("<div style='display:flex;'>")
+    list(...)
+    out("</div>")
+  } else {
+    list(...)
+  }
+  invisible(NULL)
+
+}
+
+#' @export
+out.inlinediv <- function(
+  ...,
+  margin.top = 0,
+  margin.right = 0,
+  margin.bottom = 0,
+  margin.left = 0
+){
+
+  if (knitting()) {
+    out(
+      sprintf(
+        "<div style='display:inline-block; margin:%spx %spx %spx %spx;'>",
+        margin.top,
+        margin.right,
+        margin.bottom,
+        margin.left
+      )
+    )
+    list(...)
+    out("</div>")
+  } else {
+    list(...)
+  }
+  invisible(NULL)
+
+}
+
+#' @export
+out.tag <- function(x) {
+
+  out(knitr::knit_print(x))
+
+}
+
+
+#' @export
+out.pre <- function(textlines){
+
+  if (knitting()) {
+    out("<pre>")
+    for (textline in textlines) {
+      out(textline)
+      out("<br/>")
+    }
+    out("</pre>")
+  } else {
+    for (textline in textlines) {
+      out(textline)
+    }
+  }
+  invisible(NULL)
+
+}
+
+#' @export
+out.p <- function(...){
+
+  if (knitting()) {
+    out("<p>")
+    out(...)
+    out("</p>")
+  } else {
+    list(...)
+  }
+  invisible(NULL)
 
 }
 
