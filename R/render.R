@@ -86,12 +86,29 @@ render.filetext <- function() {
 #' @export
 render.page.job <- function(codepath) {
 
+  # Get page title
+  code <- readLines(codepath)
+  pgtitle <- code[grep("^###'", code)]
+  pgtitle <- trimws(substr(pgtitle, 5, nchar(pgtitle)))
+  if (length(pgtitle) == 0) stop("No page title found")
+
+  # Setup temporary script file
   tmp <- tempfile(fileext = ".R")
   writeLines(
-    sprintf('labbook::render.page("%s")', codepath),
+    c(
+      sprintf("cat('Rendering \"%s\"')", pgtitle),
+      'cat(" ")',
+      sprintf('labbook::render.page("%s")', codepath)
+    ),
     tmp
   )
-  rstudioapi::jobRunScript(tmp, workingDir = getwd())
+
+  # Run the job
+  job <- rstudioapi::jobRunScript(
+    path = tmp,
+    name = sprintf('Render "%s"', pgtitle),
+    workingDir = getwd()
+  )
 
 }
 
