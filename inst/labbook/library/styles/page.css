@@ -10,31 +10,60 @@ main {
   position: relative;
 }
 
+p {
+  max-width: 996px;
+}
+
+.text-section {
+  max-width: 996px;
+}
+
 .title {
   margin-top: 18px;
 }
 
-/* Page header */
-#page-header {
-  background-color: rgb(63, 82, 131);
-  color: white;
-  padding: 12px;
+#page-tags {
+  padding-top: 8px;
   padding-bottom: 8px;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+#tag-links {
+  padding: 12px;
+  background-color: hsl(120, 40%, 90%);
   font-size: 90%;
+}
+
+.tag-link {
+  display: block;
+  border-left: solid 4px hsl(120, 40%, 70%);
+  padding-left: 10px;
+  color: hsl(120, 40%, 30%);
+  margin-bottom: 4px;
+}
+
+.page-tag, #tag-cancel {
+  display: inline-block;
+  margin-right: 10px;
+  color: hsl(120, 80%, 40%);
+  font-size: 80%;
+  cursor: pointer;
+}
+
+#tag-cancel {
+  font-size: 120%;
   position: relative;
+  margin-right: 8px;
+  top: 1px;
 }
 
-#page-header {
-  border-bottom: solid 4px rgb(54, 69, 111);
+.page-tag:hover {
+  color: hsl(120, 80%, 20%);
 }
 
-#page-header a {
-  color: lightblue;
-}
-
-#page-header a:hover {
-  color: cyan;
-  text-decoration: none;
+.page-tag:before {
+  content: "\25CF  ";
 }
 
 /* Source code */
@@ -78,12 +107,13 @@ main {
   display: block;
   padding-top: 8px;
   padding-bottom: 8px;
-  margin-bottom: -34px;
   padding-left: 8px;
   padding-right: 8px;
   border-left: solid 20px hsl(210, 30%, 70%);
   background-color: hsl(210, 50%, 90%);
   background-image: linear-gradient(to right, hsl(210, 50%, 90%) , hsl(210, 50%, 98%));
+  width: 100vw;
+  box-sizing: border-box;
 }
 
 #code-download-link:hover {
@@ -93,8 +123,37 @@ main {
 
 #code-download-link:after {
   display: block;
-  content: "(All loaded files can be found online, paths are relative to the project directory. Alternatively click on loaded files in the code below to download them directly)";
+  content: "(All loaded files can be found online, paths are relative to the project directory. Alternatively click on any loaded files listed below to download them directly)";
   font-weight: lighter;
+}
+
+.fileused {
+  border-left: solid 10px hsl(169, 40%, 80%);
+  background-color: hsl(169, 40%, 95%);
+  width: 100vw;
+  box-sizing: border-box;
+  color: hsl(169, 40%, 80%);
+  font-size: 80%;
+  cursor: pointer;
+}
+
+.fileused:hover {
+  background-color: hsl(169, 40%, 90%);
+}
+
+.fileused a {
+  color: hsl(169, 40%, 40%);
+  width: 100%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  display: block;
+  box-sizing: border-box;
+}
+
+.fileused a:hover {
+  color: hsl(169, 40%, 20%);
 }
 
 /* If a string is linked to a file */
@@ -105,6 +164,24 @@ code .linked-string {
 code .linked-string:hover {
   color: #0099ff;
   text-decoration: underline;
+}
+
+/* If a link is outdated */
+#page-header #page-link {
+  color: #ffffff;
+}
+
+#page-header #page-link.outdated-link {
+  color: #ffcce0;
+  cursor: default;
+}
+
+#page-header #page-link.online-link {
+  color: lightblue;
+}
+
+#page-header #page-link.online-link:hover {
+  color: cyan;
 }
 
 /* Code block */
@@ -186,6 +263,7 @@ code .linked-string:hover {
   padding-bottom: 12px;
   width: 100%;
   margin-left: 0;
+  margin-top:-14px;
   overflow: hidden;
   cursor: default;
 }
@@ -307,7 +385,7 @@ code .st a:hover {
   /*border-bottom: solid 4px #eee;*/
   border-left: solid #f6f6f6 20px;
   background-image:linear-gradient(to left, #fff, #f6f6f6 800px);
-  font-weight: bolder;
+  border-bottom: solid 3px #f6f6f6;
 }
 
 /*.tab-panel:after {
@@ -322,32 +400,193 @@ code .st a:hover {
 
 .tabset-div {
   padding-left: 18px;
+  padding-top: 18px;
   border-left: solid #f6f6f6 20px;
-}
-
-.tab-div {
-  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .tab-panel .tabset-tab {
-  color: #999;
+  color: #ccc;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-top: 7px;
+  padding-bottom: 3px;
   padding-left: 12px;
   padding-right: 12px;
   margin-top: 12px;
   cursor: pointer;
   display: inline-block;
+  position:relative;
+  top: 3px;
+  box-shadow: 4px -2px 4px #f6f6f6;
+  margin-right: 5px;
+  background-color: #fafafa;
+  border-bottom: solid 3px #fafafa;
 }
 
 .tabset-tab.active {
   background-color: #fff;
   color: #666;
+  border-bottom: solid 3px #ffffff;
+  box-shadow: none;
 }
 
 .tabset-tab:hover {
   color: #444;
+  background-color: #fefefe;
 }
+
+
+/* Styles for flex rows */
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.seq-table td {
+  padding: 0;
+  position: relative;
+}
+
+.seq-table .b7-position {
+  background-color: #cccccc;
+}
+
+.seq-table .siteA-position,
+.seq-table .siteB-position,
+.seq-table .siteC-position,
+.seq-table .siteD-position,
+.seq-table .siteE-position {
+  background-color: #eeeeee;
+}
+
+.seq-table .b7-position:after,
+.seq-table .siteA-position:after,
+.seq-table .siteB-position:after,
+.seq-table .siteC-position:after,
+.seq-table .siteD-position:after,
+.seq-table .siteE-position:after {
+  font-size: 8px;
+  padding-left: 4px;
+  padding-top: 2px;
+  font-weight: bold;
+  color: #aaa;
+  position: absolute;
+  left: 0;
+}
+
+.seq-table .b7-position:after {
+  content: "B7";
+  color: #666;
+}
+.seq-table .siteA-position:after {
+  content: "A";
+}
+.seq-table .siteB-position:after {
+  content: "B";
+}
+.seq-table .siteC-position:after {
+  content: "C";
+}
+.seq-table .siteD-position:after {
+  content: "D";
+}
+.seq-table .siteE-position:after {
+  content: "E";
+}
+
+.RacViewer {
+  margin-right: 20px;
+}
+
+/*@keyframes example {
+  from {top: 0;}
+  to   {top: 46px;}
+}*/
+
+.html-widget-unloaded {
+  border: solid 2px #f6f6f6;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  background: repeating-linear-gradient(
+    -45deg,
+    #f7f7f7,
+    #f7f7f7 25px,
+    #fafafa 25px,
+    #fafafa 50px
+  );
+}
+
+.html-widget-unloaded:after {
+  content: "..loading plot...";
+  font-size: 18px;
+  color: #ddd;
+  position: absolute;
+  top: 12px;
+  left: 12px;
+}
+
+/*.html-widget-unloaded:after {
+  content: "Loading plot...";
+  position: absolute;
+  top:-10000px;
+  bottom:-10000px;
+  left:-10000px;
+  right:-10000px;
+  font-size: 24px;
+  color: #fff;
+  background-origin: border-box;
+  background: repeating-linear-gradient(
+    to bottom,
+    #eee,
+    #eee 20px,
+    #f3f3f3 20px,
+    #f3f3f3 40px
+  );
+  transform: rotate(-45deg);
+  animation-name: example;
+  animation-duration: 1s;
+  animation-direction: normal;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}*/
+
+.plotinfo {
+  font-size: 10px;
+  color: #6699ff;
+  border-bottom: solid 1px #e6eeff;
+  padding-bottom: 4px;
+  padding-right: 40px;
+  width: fit-content;
+}
+
+.plotinfo:before {
+  content: "i";
+  font-weight: bolder;
+  width: 12px;
+  height: 12px;
+  border: solid 1.5px #6699ff;
+  padding: 2px;
+  box-sizing: border-box;
+  font-size: 7px;
+  display: inline-block;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 6px;
+}
+
+/*.plot-container.plotly {
+  border-left: solid 1.5px #e6eeff;
+  z-index: 1000;
+}
+
+.plot-container.plotly:before {
+  content: "Plotly plot, click or double click legend to interact";
+  padding-left: 8px;
+  font-size: 10px;
+  color: #b3ccff;
+}*/
+
+
 

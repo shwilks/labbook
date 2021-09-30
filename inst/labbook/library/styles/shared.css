@@ -2,25 +2,23 @@
 
 /* Page header */
 #page-header {
-	background-color: rgb(63, 82, 131);
-	color: white;
-	padding: 12px;
-	padding-bottom: 8px;
-	font-size: 90%;
-	position: relative;
-}
-
-#page-header {
-	border-bottom: solid 4px rgb(54, 69, 111);
+  background-color: rgb(63, 82, 131);
+  color: white;
+  padding: 12px;
+  padding-bottom: 8px;
+  font-size: 90%;
+  position: relative;
+  border-bottom: solid 4px rgb(54, 69, 111);
 }
 
 #page-header a {
-	color: lightblue;
+  display: inline;
+  color: lightblue;
 }
 
 #page-header a:hover {
-	color: cyan;
-	text-decoration: none;
+  color: cyan;
+  text-decoration: none;
 }
 
 
