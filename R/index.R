@@ -58,7 +58,6 @@ add_project_pagelink <- function(
     subtitle,
     page_title,
     page_link,
-    page_version = NULL,
     subtitlepos  = "bottom"
     ){
 
@@ -81,14 +80,6 @@ add_project_pagelink <- function(
         href   = page_link,
         .where = "after"
     )
-
-    # Deal with page versions
-    if(!is.null(page_version)){
-
-        # Add a version attribute
-        node_attributes$version <- page_version
-
-    }
 
     # Add the node
     newnode <- do.call(xml2::xml_add_sibling, node_attributes)
@@ -192,7 +183,6 @@ addIndexPageLink <- function(
     page_title,
     page_subtitle,
     page_link,
-    page_version = NULL,
     overwrite = TRUE,
     subtitlepos = "bottom"
 ){
@@ -212,7 +202,6 @@ addIndexPageLink <- function(
         subtitle     = page_subtitle,
         page_title   = page_title,
         page_link    = page_link,
-        page_version = page_version,
         subtitlepos  = subtitlepos
     )
 
