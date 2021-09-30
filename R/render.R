@@ -3,7 +3,7 @@
 chunk_end   <- "```"
 
 # # Wrap text in a code chunk
-# chunk_code <- function(code, args = NULL, language = "r"){
+# chunk_code <- function(code, args = NULL, language = "r") {
 #
 #     paste0(
 #         "```\n",
@@ -22,7 +22,7 @@ chunk_end   <- "```"
 
 
 # Start a new code chunk
-new_chunk <- function(chunk.name = NULL, args, language = "r"){
+new_chunk <- function(chunk.name = NULL, args, language = "r") {
 
     paste0(
         chunk_end, "\n",
@@ -36,19 +36,27 @@ new_chunk <- function(chunk.name = NULL, args, language = "r"){
 
 }
 
+# Render in a new r session
+render_new_session <- function(...) {
+  callr::r(
+    func = function(...) rmarkdown::render(..., envir = globalenv()),
+    args = list(...),
+    show = TRUE
+  )
+}
 
 # Render a currently open file
-render.file <- function(){
+render.file <- function() {
 
     filepath <- rstudioapi::getSourceEditorContext()$path
-    if(filepath == "") return(invisible(NULL))
+    if (filepath == "") return(invisible(NULL))
     filename <- basename(filepath)
 
-    if(filename == "overall-todo.md"){
+    if (filename == "overall-todo.md") {
         openTodo(openmd = FALSE)
     } else {
         rstudioapi::sendToConsole(
-            sprintf('labbook::render.page("%s")', filepath),
+            sprintf('labbook::render.page.job("%s")', filepath),
             focus = FALSE
         )
     }
@@ -56,13 +64,13 @@ render.file <- function(){
 }
 
 # Render text for a currently open file
-render.filetext <- function(){
+render.filetext <- function() {
 
     filepath <- rstudioapi::getSourceEditorContext()$path
-    if(filepath == "") return(invisible(NULL))
+    if (filepath == "") return(invisible(NULL))
     filename <- basename(filepath)
 
-    if(filename == "overall-todo.md"){
+    if (filename == "overall-todo.md") {
         openTodo(openmd = FALSE)
     } else {
         rstudioapi::sendToConsole(
@@ -73,6 +81,19 @@ render.filetext <- function(){
 
 }
 
+
+# Render the page as a job
+#' @export
+render.page.job <- function(codepath) {
+
+  tmp <- tempfile(fileext = ".R")
+  writeLines(
+    sprintf('labbook::render.page("%s")', codepath),
+    tmp
+  )
+  rstudioapi::jobRunScript(tmp, workingDir = getwd())
+
+}
 
 
 # Render the page
@@ -89,20 +110,20 @@ render.page <- function(
     verbose        = FALSE,
     codetoggle     = TRUE,
     standalone     = FALSE,
+    embed_js       = standalone,
     headcontent    = NULL,
     headercontent  = NULL,
     cache          = FALSE,
-    async_widgets  = TRUE,
-    envir          = new.env()
-){
+    async_widgets  = !standalone
+    ) {
 
     # Set default codepath
-    if(is.null(codepath)){
+    if (is.null(codepath)) {
         codepath <- rstudioapi::getActiveDocumentContext()$path
     }
 
     # Exit if no valid codepath found
-    if(codepath == "") return()
+    if (codepath == "") return()
 
     # Parse code path
     codepath      <- normalizePath(codepath)
@@ -110,10 +131,12 @@ render.page <- function(
     codedir       <- dirname(codepath)
     projectdir    <- file.path(codedir, "..")
     index_path    <- file.path(codedir, "..", "..", "..", "index.html")
-    template_path <- file.path(codedir, "..", "..", "..", "library", "templates")
+    library_path  <- file.path(codedir, "..", "..", "..", "library")
+    template_path <- file.path(library_path, "templates")
+    tags_path     <- file.path(library_path, "tags.js")
 
     # Message that knitting is in progress
-    if(verbose) message("Start rendering")
+    if (verbose) message("Start rendering")
 
     # Remove any current files
     pagefiledir <- paste0(substr(pagepath, 1, nchar(pagepath) - 5), "_files")
@@ -121,7 +144,7 @@ render.page <- function(
 
     # Preprocess the markdown file
     markdown_file <- tempfile(fileext = ".Rmd")
-    if(verbose) message("Preprocessing code file...", appendLF = FALSE)
+    if (verbose) message("Preprocessing code file...", appendLF = FALSE)
     page <- preprocess_codefile(
         code_file         = codepath,
         markdown_output   = markdown_file,
@@ -130,63 +153,98 @@ render.page <- function(
         pagesubtitle      = pagesubtitle
     )
     # system(sprintf("open -a 'RStudio' %s", shQuote(markdown_file)))
-    if(verbose) message("done.")
+    if (verbose) message("done.")
 
     # Set default pagepath
-    if(is.null(pagepath)){
+    if (is.null(pagepath)) {
         pagename <- gsub("\\..+$", ".html", codename)
-        if(!is.null(page$version)){
-            pagename <- gsub("\\.html$", paste0("@", page$version, ".html"), pagename)
-        }
         pagepath <- file.path(codedir, "..", "pages", pagename)
     }
 
     # Knit the markdown file to the page output
-    if(verbose) message("Knitting output...", appendLF = FALSE)
+    if (verbose) message("Knitting output...", appendLF = FALSE)
     page_details <- knit_markdown(
-        markdown_file = markdown_file,
-        output_file   = pagepath,
-        eval          = eval,
-        project_path  = projectdir,
-        index_path    = index_path,
-        page_title    = page$title,
-        codetoggle    = codetoggle,
-        headcontent   = headcontent,
-        headercontent = headercontent,
-        standalone    = standalone,
-        async_widgets = async_widgets,
-        cache         = cache,
-        envir         = envir
+        markdown_file  = markdown_file,
+        output_file    = pagepath,
+        eval           = eval,
+        project_path   = projectdir,
+        index_path     = index_path,
+        page_title     = page$title,
+        page_tags      = page$tags,
+        codetoggle     = codetoggle,
+        headcontent    = headcontent,
+        headercontent  = headercontent,
+        standalone     = standalone,
+        embed_js       = embed_js,
+        async_widgets  = async_widgets,
+        add_index_link = add_index_link,
+        cache          = cache
     )
-    if(verbose) message("done.")
+    if (verbose) message("done.")
 
     # Try and open the page
-    if(openpage){
-        if(verbose) message("Opening webpage...", appendLF = FALSE)
+    if (openpage) {
+        if (verbose) message("Opening webpage...", appendLF = FALSE)
         open_webpage(pagepath, make.front = FALSE)
-        if(verbose) message("done.")
+        if (verbose) message("done.")
+    }
+
+    # Construct the page link
+    if (add_index_link && !standalone) {
+      page_link <- file.path("projects", basename(normalizePath(projectdir)), "pages", basename(pagepath))
     }
 
     # Update the index page
-    if(add_index_link && !standalone){
+    if (add_index_link && !standalone) {
 
-        if(verbose) message("Updating index page...", appendLF = FALSE)
+        if (verbose) message("Updating index page...", appendLF = FALSE)
         addIndexPageLink(
             index_path    = index_path,
             project_title = readLines(file.path(projectdir, ".title")),
             page_title    = page$title,
             page_subtitle = page$subtitle,
-            page_version  = page$version,
-            page_link     = file.path("projects", basename(normalizePath(projectdir)), "pages", basename(pagepath)),
+            page_link     = page_link,
             overwrite     = TRUE
         )
-        if(verbose) message("done.")
+        if (verbose) message("done.")
+
+    }
+
+    # Update the tags record
+    if (add_index_link && !standalone && length(page$tags) > 0) {
+
+        if (!file.exists(tags_path)) writeLines("var tags = {};", tags_path)
+        tags_js <- readLines(tags_path)
+        tags_record_js <- gsub("var tags = ", "", tags_js[1], fixed = T)
+        tags_record_js <- gsub(";", "", tags_record_js, fixed = T)
+        tags_record <- jsonlite::fromJSON(tags_record_js, simplifyVector = FALSE)
+
+        for (tag in page$tags) {
+            if (!page_link %in% sapply(tags_record[[tag]], function(x) x$link)) {
+                tags_record[[tag]] <- c(
+                    tags_record[[tag]],
+                    list(
+                        list(
+                            title = page$title,
+                            link = page_link
+                        )
+                    )
+                )
+            }
+        }
+
+        tags_js[1] <- paste0(
+            "var tags = ",
+            jsonlite::toJSON(tags_record, auto_unbox = TRUE),
+            ";"
+        )
+        writeLines(tags_js, tags_path)
 
     }
 
     # Write page id png
-    if(!standalone){
-        if(!file.exists(page_details$files_dir)){
+    if (!standalone) {
+        if (!file.exists(page_details$files_dir)) {
             dir.create(page_details$files_dir)
         }
         file.copy(
@@ -196,18 +254,20 @@ render.page <- function(
     }
 
     # Message that knitting is done
-    if(verbose) message("Rendering complete.")
+    if (verbose) message("Rendering complete.")
 
 }
 
 # Pre process a markdown file
-preprocess_codefile <- function(code_file,
-                                include_code_link = TRUE,
-                                markdown_output,
-                                pagetitle = NULL,
-                                pagesubtitle = NULL,
-                                skipfromstop = TRUE,
-                                eval = TRUE){
+preprocess_codefile <- function(
+    code_file,
+    include_code_link = TRUE,
+    markdown_output,
+    pagetitle = NULL,
+    pagesubtitle = NULL,
+    skipfromstop = TRUE,
+    eval = TRUE
+    ) {
 
     # Set the language
     fileext <- tolower(gsub("^.*\\.", "", code_file))
@@ -227,8 +287,8 @@ preprocess_codefile <- function(code_file,
     rawcode <- code
 
     # Skip any lines from a stop() declaration
-    if(skipfromstop){
-        if(sum(code == "stop()") > 0){
+    if (skipfromstop) {
+        if (sum(code == "stop()") > 0) {
             first_stop <- min(which(code == "stop()"))
             code <- code[seq_len(first_stop-1)]
             warning(sprintf("Stopped at line %s", first_stop), call. = FALSE)
@@ -239,9 +299,9 @@ preprocess_codefile <- function(code_file,
     while(length(code) > 0 && code[1] == "") code <- code[-1]
 
     # Add line breaks
-    for(x in seq_along(code)){
-        if(trimws(code[x]) == "#'"){
-            if(x != 1 && trimws(code[x-1]) != "#'" && substr(code[x-1], 1, 3) == "#' "){
+    for(x in seq_along(code)) {
+        if (trimws(code[x]) == "#'") {
+            if (x != 1 && trimws(code[x-1]) != "#'" && substr(code[x-1], 1, 3) == "#' ") {
                 code[x-1] <- paste0(code[x-1], "  ")
             }
             code[x] <- paste0(code[x], "  ")
@@ -249,13 +309,13 @@ preprocess_codefile <- function(code_file,
     }
 
     # Remove any inline code if not to be evaluated
-    if(!eval){
+    if (!eval) {
         code <- gsub("\\`r .*?\\`", "`r 'placeholder'`", code)
     }
 
     # Find the page title and remove it
     titleline <- substr(code, 1, 4) == "###'"
-    if(is.null(pagetitle)){
+    if (is.null(pagetitle)) {
 
         pagetitle <- code[titleline]
         pagetitle <- trimws(substr(pagetitle, 5, nchar(pagetitle)))
@@ -263,51 +323,46 @@ preprocess_codefile <- function(code_file,
     }
 
     code <- code[!titleline]
-    if(length(pagetitle) == 0) stop("Page must have a title")
+    if (length(pagetitle) == 0) stop("Page must have a title")
 
-    # Check for a page version after the title
-    pageversionline <- which(titleline)
-    if(substr(code[pageversionline], 1, 4) == "#' @"){
-        pageversion <- code[pageversionline]
-        pageversion <- trimws(substr(pageversion, 5, nchar(pageversion)))
-        code[pageversionline] <- paste0("#' <div class='page-version'>", pageversion, "</div>")
-    } else {
-        pageversion <- NULL
-    }
+    # Check for any tags
+    taglines <- grepl("#' @", code, fixed = TRUE)
+    tags <- trimws(gsub("#' @", "", code[taglines], fixed = TRUE))
+    code <- code[!taglines]
 
     # Find the page subtitle and remove it
     subtitleline <- substr(code, 1, 3) == "##'"
-    if(is.null(pagesubtitle)){
+    if (is.null(pagesubtitle)) {
 
         pagesubtitle <- code[subtitleline]
         pagesubtitle <- trimws(substr(pagesubtitle, 4, nchar(pagesubtitle)))
 
     }
     code         <- code[!subtitleline]
-    if(length(pagesubtitle) == 0) stop("Page must have a subtitle")
+    if (length(pagesubtitle) == 0) stop("Page must have a subtitle")
 
     # Replace lines starting with #'
     speciallines <- grepl("^#'", code)
     commentlines <- rep(FALSE, length(speciallines))
 
-    for(linenum in which(speciallines)){
+    for(linenum in which(speciallines)) {
 
         # Extract the comment
         linecontent <- code[linenum]
         comment     <- gsub("^#'( )*", "", linecontent)
 
-        if(grepl("^#' \\[", linecontent)){
+        if (grepl("^#' \\[", linecontent)) {
 
             # Changing figure sizes
             fig.dim   <- as.numeric(strsplit(gsub("^.*\\[(.*)\\].*$", "\\1", comment), ",")[[1]])
             fig.scale <- stringr::str_extract(comment, "\\*[0-9\\.]*")
 
-            if(is.na(fig.scale)) fig.scale <- 1
+            if (is.na(fig.scale)) fig.scale <- 1
             else                 fig.scale <- as.numeric(substr(fig.scale, 2, nchar(fig.scale)))
 
             # Getting and stripping the figure name
             fig.name  <- stringr::str_extract(comment, "//.*$")
-            if(!is.na(fig.name)) fig.name <- trimws(substr(fig.name, 3, nchar(fig.name)))
+            if (!is.na(fig.name)) fig.name <- trimws(substr(fig.name, 3, nchar(fig.name)))
             else                 fig.name <- NULL
             comment <- gsub("//.*$", "", comment)
 
@@ -325,7 +380,7 @@ preprocess_codefile <- function(code_file,
 
 
             # Add additional chunk args
-            for(i in seq_along(fig.extra)){
+            for(i in seq_along(fig.extra)) {
                 extra <- strsplit(fig.extra[i], "=")[[1]]
                 chunk_args[extra[1]] <- extra[2]
             }
@@ -346,10 +401,10 @@ preprocess_codefile <- function(code_file,
     lastlinecomment <- FALSE
     sectionnum      <- 1
 
-    for(linenum in seq_along(commentlines)){
+    for(linenum in seq_along(commentlines)) {
 
         # Strip the comment marks
-        if(commentlines[linenum]){
+        if (commentlines[linenum]) {
 
             # Remove the #'
             code[linenum] <- substr(code[linenum], 4, nchar(code[linenum]))
@@ -357,18 +412,18 @@ preprocess_codefile <- function(code_file,
         }
 
         # If starting new lines of comments
-        if(commentlines[linenum] && !lastlinecomment){
+        if (commentlines[linenum] && !lastlinecomment) {
             code[linenum] <- paste0(chunk_end, "\n<div class='text-section' id='text-section-", sectionnum, "'>", code[linenum])
             sectionnum <- sectionnum + 1
         }
 
         # If ending a line of comments
-        if(!commentlines[linenum] && lastlinecomment){
+        if (!commentlines[linenum] && lastlinecomment) {
             code[linenum] <- paste0("</div>\n```{", language,"}\n", code[linenum])
         }
 
         # If you've reached the last line as a comment
-        if(commentlines[linenum] && linenum == length(commentlines)){
+        if (commentlines[linenum] && linenum == length(commentlines)) {
             code[linenum] <- paste0(code[linenum], "</div>\n```{", language,"}")
         }
 
@@ -378,7 +433,7 @@ preprocess_codefile <- function(code_file,
     }
 
     # Set the codefile link
-    if(include_code_link){
+    if (include_code_link) {
         codelink <- sprintf(
             "<a id='code-download-link' href='%s'>Download code</a>",
             file.path("..", "code", codename)
@@ -411,7 +466,7 @@ preprocess_codefile <- function(code_file,
     list(
         title    = pagetitle,
         subtitle = pagesubtitle,
-        version  = pageversion
+        tags     = tags
     )
 
 }
@@ -424,24 +479,23 @@ knit_markdown <- function(
     project_path,
     index_path,
     page_title,
-    async_widgets = FALSE,
-    codetoggle    = TRUE,
-    headercontent = NULL,
-    headcontent   = NULL,
-    standalone    = FALSE,
-    eval          = TRUE,
-    cache         = FALSE,
-    envir         = new.env()
-){
+    page_tags,
+    add_index_link = TRUE,
+    codetoggle     = TRUE,
+    headercontent  = NULL,
+    headcontent    = NULL,
+    standalone     = FALSE,
+    async_widgets  = !standalone,
+    embed_js       = standalone,
+    eval           = TRUE,
+    cache          = FALSE
+) {
 
     # Set the library and cache location
     lib_dir     <- file.path(dirname(output_file), ".lib")
     cache_dir   <- gsub("\\.html$", "_cache/", output_file)
     files_dir   <- gsub("\\.html$", "_files/", output_file)
     widgets_dir <- file.path(files_dir, "widgets")
-
-    # Get project information
-    project <- project.info(project_path)
 
     # Set the code link
     # codelink <- paste0("<a id='code-download-link' href='", file.path("..", "code", codename),"'>Download code</a>")
@@ -454,38 +508,48 @@ knit_markdown <- function(
     page_id <- make_page_id()
     page_id_div <- paste0("<div id='page-id' style='display:none;'>", page_id, "</div>")
 
+    # Generate a page tags div
+    tags_div <- paste0(
+        "<div id='page-tags'>",
+        paste(vapply(
+            page_tags, function(tag) {
+                sprintf("<div class='page-tag'>%s</div>", tag)
+            },
+            character(1)
+        ), collapse = ""),
+        "</div>"
+    )
+
     # Generate header file
     header_file <- tempfile()
-    if(is.null(headcontent)){
-        if(standalone){
-            headcontent <- c(
-                sprintf('<script src="%s"></script>', normalizePath(file.path(project_path, ".lib", "scripts", "jquery.min.js"))),
-                sprintf('<script src="%s"></script>', normalizePath(file.path(project_path, ".lib", "scripts", "page.js")))
-            )
+    if (is.null(headcontent)) {
+        if (embed_js) {
+            headcontent <- ''
         } else {
             headcontent <- c(
                 '<link href="../.lib/styles/general.css" rel="stylesheet"/>',
                 '<link href="../.lib/styles/shared.css" rel="stylesheet"/>',
                 '<link href="../.lib/styles/page.css" rel="stylesheet"/>',
-                '<script src="../.lib/scripts/jquery.min.js"></script>',
+                '<link href="../.lib/styles/labpage.css" rel="stylesheet"/>',
+                '<script src="../.lib/tags.js"></script>',
                 '<script src="../.lib/scripts/page.js"></script>'
             )
         }
     }
+
     writeLines(
         text = headcontent,
         con  = header_file
     )
 
     # Set code toggle
-    if(codetoggle){ codetogglediv <- "<div class='headerlink' id='codetoggle'></div>" }
-    else          { codetogglediv <- NULL                          }
+    if (codetoggle) codetogglediv <- "<div class='headerlink' id='codetoggle'></div>"
+    else            codetogglediv <- NULL
 
     # Generate header file
     before_body_file <- tempfile()
-    labbook_name     <- getLabbookName(index_path)
 
-    if(standalone){
+    if (standalone || !add_index_link) {
 
         writeLines(
             text = c(
@@ -493,6 +557,7 @@ knit_markdown <- function(
                 page_id_div,
                 codetogglediv,
                 headercontent,
+                tags_div,
                 "</header>",
                 "<main>"
             ),
@@ -500,6 +565,10 @@ knit_markdown <- function(
         )
 
     } else {
+
+        # Get project information
+        project <- project.info(project_path)
+        labbook_name <- getLabbookName(index_path)
 
         writeLines(
             text = c(
@@ -517,6 +586,7 @@ knit_markdown <- function(
                 page_id_div,
                 codetogglediv,
                 headercontent,
+                tags_div,
                 "</header>",
                 "<main>"
             ),
@@ -539,22 +609,32 @@ knit_markdown <- function(
     )
 
     # Generate the output format
-    if(standalone){
-        css <- c(
-            file.path(project_path, ".lib", "styles", "general.css"),
-            file.path(project_path, ".lib", "styles", "shared.css"),
-            file.path(project_path, ".lib", "styles", "page.css")
-        )
+    if (embed_js) {
         output_format <- eval(substitute(
             rmarkdown::html_document(
                 highlight = "default",
                 theme = NULL,
-                self_contained = TRUE,
+                self_contained = standalone,
                 # mathjax = "default",
                 mathjax = NULL,
                 pandoc_args = "--mathml",
                 section_divs = TRUE,
-                css = css,
+                extra_dependencies = list(
+                  htmldeps::html_dependency_jquery(),
+                  htmltools::htmlDependency(
+                    name = "Racmacs",
+                    version = "1.0.11",
+                    src = system.file("labbook/library", package = "labbook"),
+                    script = c(
+                      "scripts/page.js"
+                    ),
+                    stylesheet = c(
+                      "styles/general.css",
+                      "styles/shared.css",
+                      "styles/page.css"
+                    )
+                  )
+                ),
                 includes = rmarkdown::includes(
                     in_header   = header_file,
                     before_body = before_body_file,
@@ -571,12 +651,15 @@ knit_markdown <- function(
             rmarkdown::html_document(
                 highlight = "default",
                 theme = NULL,
-                self_contained = FALSE,
+                self_contained = standalone,
                 lib_dir = lib_dir,
                 includes = rmarkdown::includes(
                     in_header   = header_file,
                     before_body = before_body_file,
                     after_body  = after_body_file
+                ),
+                extra_dependencies = list(
+                  htmldeps::html_dependency_jquery()
                 ),
                 # mathjax = "local",
                 mathjax = NULL,
@@ -602,6 +685,7 @@ knit_markdown <- function(
     output_format$knitr$opts_chunk$comment       = NA
     output_format$knitr$opts_chunk$render        = labpage_render
     output_format$knitr$opts_chunk$widgets.dir   = widgets_dir
+
     # output_format$knitr$
     # browser()
     # output_format$knitr$opts_chunk$engine.path   = list(
@@ -609,15 +693,15 @@ knit_markdown <- function(
     # )
     # # output_format$knitr$opts_chunk$results       = "asis"
 
-    if(cache){
+    if (cache) {
         output_format$knitr$opts_chunk$cache      = TRUE
         output_format$knitr$opts_chunk$cache.path = cache_dir
     }
 
     # Set hook for numbering subchunks
-    output_format$knitr$knit_hooks$subchunk <- function(before, options, envir){
+    output_format$knitr$knit_hooks$subchunk <- function(before, options, envir) {
 
-        if(before){
+        if (before) {
             envir$`.subChunkNum`   <- 0
             envir$`.chunk-label`   <- options$label
             return(NULL)
@@ -626,8 +710,8 @@ knit_markdown <- function(
     }
 
     # Custom hook for inline output
-    output_format$knitr$knit_hooks$inline <- function(x){
-        if(grepl("\n", x)){
+    output_format$knitr$knit_hooks$inline <- function(x) {
+        if (grepl("\n", x)) {
             return(paste0("<div class='inline-output'>", x, "</div>"))
         } else {
             return(paste0("<span class='inline-output'>", x, "</span>"))
@@ -635,7 +719,7 @@ knit_markdown <- function(
     }
 
     # Custom hook for regular output
-    output_format$knitr$knit_hooks$output <- function(x, options){
+    output_format$knitr$knit_hooks$output <- function(x, options) {
 
         # Sequences for div start and end
         div_start <- "<pre class='code-block code-output output-code'><code>"
@@ -651,7 +735,7 @@ knit_markdown <- function(
         x <- stringr::str_replace_all(
             string      = x,
             pattern     = paste0("(^|",Hmisc::escapeRegex(escape_end),").*?($|",Hmisc::escapeRegex(escape_start),")"),
-            replacement = function(s){
+            replacement = function(s) {
                 # Remove any preserver marks
                 s <- gsub(escape_start, "", s, fixed = T)
                 s <- gsub(escape_end, "", s, fixed = T)
@@ -672,13 +756,12 @@ knit_markdown <- function(
     graphics.off()
 
     # Render the html page
-    rmarkdown::render(
+    render_new_session(
         input = markdown_file,
         output_format = output_format,
         output_file = output_file,
         quiet = TRUE,
-        knit_root_dir = getwd(),
-        envir = envir
+        knit_root_dir = getwd()
     )
 
     # Return the page details
@@ -695,21 +778,21 @@ rerender.pagetext <- function(
     codepath = NULL,
     pagepath = NULL,
     openpage = TRUE
-    ){
+    ) {
 
     # Set default codepath
-    if(is.null(codepath)){
+    if (is.null(codepath)) {
         codepath <- rstudioapi::getActiveDocumentContext()$path
     }
 
     # Exit if no valid codepath found
-    if(codepath == "") return()
+    if (codepath == "") return()
 
     codename <- basename(codepath)
     codedir  <- dirname(codepath)
 
     # Set default pagepath
-    if(is.null(pagepath)){
+    if (is.null(pagepath)) {
         pagename <- gsub("\\.R$", ".html", codename)
         pagepath <- file.path(codedir, "..", "pages", pagename)
     }
@@ -733,12 +816,12 @@ rerender.pagetext <- function(
     pagesections <- xml2::xml_find_all(pagehtml, xpath)
     tmpsections  <- xml2::xml_find_all(tmphtml,  xpath)
 
-    if(length(pagesections) != length(tmpsections)){
+    if (length(pagesections) != length(tmpsections)) {
         stop("Cannot perform automatic section matching, please rerender the page.")
     }
 
     # Replace each text section with the new text
-    for(sectionnum in seq_along(pagesections)){
+    for(sectionnum in seq_along(pagesections)) {
 
         pagesection <- pagesections[[sectionnum]]
         tmpsection  <- tmpsections[[sectionnum]]
@@ -749,13 +832,13 @@ rerender.pagetext <- function(
         tmpsection_inlinenodes  <- xml2::xml_find_all(tmpsection,  xpath)
 
         # Replace the inline nodes with those from the original page
-        if(length(pagesection_inlinenodes) != length(tmpsection_inlinenodes)){
+        if (length(pagesection_inlinenodes) != length(tmpsection_inlinenodes)) {
             stop("Cannot perform automatic section matching, please rerender the page.")
         }
 
-        for(nodenum in seq_along(pagesection_inlinenodes)){
+        for(nodenum in seq_along(pagesection_inlinenodes)) {
 
-            if(xml2::xml_name(pagesection_inlinenodes[[nodenum]]) == "span"){
+            if (xml2::xml_name(pagesection_inlinenodes[[nodenum]]) == "span") {
 
                 # If the inline node is a span we can simply replace it
                 xml2::xml_replace(tmpsection_inlinenodes[[nodenum]], pagesection_inlinenodes[[nodenum]])
@@ -774,7 +857,7 @@ rerender.pagetext <- function(
     }
 
     # Replace the nodes
-    for(sectionnum in seq_along(pagesections)){
+    for(sectionnum in seq_along(pagesections)) {
 
         # Now replace the original text node
         xml2::xml_replace(pagesections[[sectionnum]], tmpsections[[sectionnum]])
@@ -785,16 +868,8 @@ rerender.pagetext <- function(
     xml2::write_html(pagehtml, pagepath)
 
     # Try and open the page
-    if(openpage){
+    if (openpage) {
         open_webpage(pagepath, make.front = FALSE)
     }
 
 }
-
-
-
-
-
-
-
-
