@@ -1,5 +1,4 @@
 
-
 // Morph shape class
 class MorphShape {
 
@@ -45,6 +44,53 @@ class MorphShape {
     this.paths.reverse();
 
   }
+
+}
+
+
+function linkToOnlinePage(){
+
+  var page_breadcrumb = $("#page-link");
+  var local_path = window.location.href;
+
+  var online_path = local_path.replace(
+    "file:///Users/samwilks/Dropbox/labbook",
+    "https://notebooks.antigenic-cartography.org/samwilks"
+  );
+
+  var online_path = online_path.replace(
+    "file:///Users/samwilks/Dropbox/LabBook",
+    "https://notebooks.antigenic-cartography.org/samwilks"
+  );
+
+  page_breadcrumb.attr("href", online_path);
+  page_breadcrumb.addClass("outdated-link");
+
+  var page_id = $("#page-id").html();
+  var page_id_png_path = online_path.replace(/\.html$/, "_files")+"/"+page_id+".png";
+  var page_id_png = $("<img>").attr("src", page_id_png_path);
+  page_id_png.on("load", f => {
+    page_breadcrumb.removeClass("outdated-link");
+    page_breadcrumb.addClass("online-link");
+  });
+  // page_breadcrumb.addClass("online-link");
+
+  // if(local_path.substr(0, 7) == "file://"){
+
+  //   // Check if file exists
+  //   $.ajax({
+  //       url: online_path,
+  //       type:'HEAD',
+  //       success: function() {
+  //           page_breadcrumb.attr("href", online_path);
+  //           page_breadcrumb.addClass("online-link");
+  //       },
+  //       error: function() {
+  //           page_breadcrumb.addClass("outdated-link");
+  //       }
+  //   });
+
+  // }
 
 }
 
@@ -117,27 +163,50 @@ function linkImages(){
 // Linking code files
 function linkCodeFiles(){
 
+  // Set pattern for filename and record for any files found
+  var pattern = /.\.[^\s\/]+$/;
+  var filesused = document.createElement("div");
+  filesused.id = "filesused";
+  $("#code-download-link").after(filesused);
+
   // Loop through strings
   $(".page-code").find(".hljs-string").each(function(i, el){
 
     var string = el.innerHTML;
-    var stringstart   = string.substring(0, 1);
-    var stringend     = string.substring(string.length-1, string.length);
-    var stringcontent = string.substring(1, string.length - 1);
-    var path = "../"+stringcontent;
+    if(pattern.test(string)){
+      var stringstart   = string.substring(0, 1);
+      var stringend     = string.substring(string.length-1, string.length);
+      var stringcontent = string.substring(1, string.length - 1);
+      var path = "../"+stringcontent;
 
-    // Check if file exists
-    $.ajax({
-        url: path,
-        type:'HEAD',
-        success: function() {
+      // Check if file exists
+      $.ajax({
+          url: path,
+          type:'HEAD',
+          success: function() {
 
-            // Insert a link
-            el.innerHTML = stringstart+"<a href='"+path+"'>"+stringcontent+"</a>"+stringend;
-            el.classList.add("linked-string");
+              // Insert a link
+              // el.innerHTML = stringstart
+              //                + "<a href='" + path + "'>"
+              //                + stringcontent
+              //                + "</a>" + stringend;
+              //
+              // el.classList.add("linked-string");
 
-        }
-    });
+              // Add to the files used div
+              var filediv  = document.createElement("div");
+              var pattern  = /[^\/\s]+\.[^\/\s]+$/;
+              var filename = pattern.exec(stringcontent);
+              filediv.innerHTML = "<a href='" + path + "'>"
+                                  + stringcontent
+                                  + "</a>";
+              filediv.classList.add("fileused");
+
+              filesused.appendChild(filediv);
+
+          }
+      });
+    }
 
   });
 
@@ -226,6 +295,48 @@ function activateTabsets(){
 }
 
 
+function linkTags() {
+
+    if ($(".page-tag").length > 0) {
+
+        var taglinks = $("<div id='tag-links'/>");
+        taglinks.hide();
+        taglinks.insertAfter("#page-tags");
+
+        var tagcancel = $("<div id='tag-cancel'/>").html("&otimes;");
+        $("#page-tags").prepend(tagcancel);
+        tagcancel.click(e => {
+            taglinks.hide();
+        });
+
+        $(".page-tag").each(function() {
+
+            $(this).click(e => {
+
+                taglinks.hide();
+                var shared_tags = tags[this.innerHTML];
+                taglinks.empty();
+                shared_tags.forEach(
+                    function(tag) {
+                        taglinks.append(
+                            $("<a/>")
+                            .addClass("tag-link")
+                            .attr("href", "../../../"+tag.link)
+                            .html(tag.title)
+                        );
+                    }
+                );
+                taglinks.show();
+
+            });
+        });
+
+    } else {
+        $("#page-tags").hide();
+    }
+
+}
+
 
 // Upon loading the DOM
 $( document ).ready(function() {
@@ -240,8 +351,3 @@ $( document ).ready(function() {
     activateTabsets();
 
 });
-
-
-
-
-
