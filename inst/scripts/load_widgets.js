@@ -75,7 +75,7 @@ function load_async_widget_data(){
 				var widget_filepath = page_filepath+"/widgets";
 				var widget_name = el.id.replace("-", "_");
 
-				loadScript(widget_filepath+"/"+widget_name+".js", function(){
+				loadScript(widget_filepath+"/"+widget_name+".js?version="+Date.now(), function(){
 					var plotdata = eval(widget_name);
 					var data = JSON.parse(plotdata);
 					var initResult = el["htmlwidget_data_init_result"];
