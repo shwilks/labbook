@@ -1,5 +1,10 @@
 
 #' @export
+stringify <- function(x) {
+    paste(as.character(rlang::enexprs(x)), collapse = "\n")
+}
+
+#' @export
 render.pagetemplate <- function(
     template,
     codepath,
