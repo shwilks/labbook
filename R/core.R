@@ -175,3 +175,115 @@ labbook.newPage <- function(
 
 }
 
+#' @export
+labbook_newpage <- function(openfile = TRUE) {
+
+    index <- read_index("../../index.html")
+    project <- get_index_project(index, readLines(".title"))
+    subtitles <- vapply(getSubtitleNodes(project), xml2::xml_text, character(1))
+
+    # Get page title
+    cat("\n")
+    page_title <- trimws(readline("Page title: "))
+    if (page_title == "") return()
+    page_title_safe <- make.safename(page_title)
+
+    # Get page subtitle
+    print(unname(data.frame(subtitles)))
+    cat("\n")
+    page_subtitle <- trimws(readline("Subtitle: "))
+    if (page_subtitle == "") return()
+    subtitle_index <- suppressWarnings(as.numeric(page_subtitle))
+    if (!is.na(subtitle_index)) page_subtitle <- subtitles[subtitle_index]
+
+    # Write the page template
+    output <- c(
+        "",
+        paste("##'", page_subtitle),
+        paste("###'", page_title),
+        "",
+        "# Setup workspace",
+        "rm(list = ls())",
+        "library(labbook)",
+        ""
+    )
+
+    # Create the file
+    filepath <- file.path("code", paste0(page_title_safe, ".R"))
+    writeLines(output, filepath)
+
+    # Open the new file
+    if(openfile) file.edit(filepath)
+    # rstudioapi::navigateToFile(filepath)
+
+    # Return the file path silently
+    invisible(filepath)
+
+}
+
+#' @export
+labbook_clone_page <- function(ext = "_v2") {
+    path <- rstudioapi::getSourceEditorContext()$path
+    lines <- readLines(path)
+    lines[grep("###'", lines)] <- paste0(lines[grep("###'", lines)], ext)_v2
+    newpath <- gsub("\\.([Rr])$", paste0(ext, ".\\1"), path)
+    writeLines(lines, newpath)
+    file.edit(newpath)
+}
+
+#' @export
+labbook_merge_subtitles <- function(
+    subtitle_from,
+    subtitle_into
+    ) {
+
+    # Set variables
+    project_title <- readLines(".title")
+    index_path <- "../../index.html"
+
+    # Get the index
+    index <- read_index(index_path)
+
+    # Get the project node
+    projectnode <- get_index_project(index, project_title)
+
+    # Get the subtitle 1 node to move from
+    titlenode1 <- getSubtitleNode(projectnode, subtitle_from)
+    if(length(titlenode1) == 0) stop("Subtitle not found")
+    linknodes1 <- getSubtitleLinks(projectnode, subtitle_from)
+
+    # Get the subtitle 2 node to move to
+    titlenode2 <- getSubtitleNode(projectnode, subtitle_into)
+    if(length(titlenode2) == 0) stop("Subtitle not found")
+    linknodes2 <- getSubtitleLinks(projectnode, subtitle_into)
+
+    # Work out sibling node from the second subtitle
+    if(length(linknodes2) == 0) {
+        siblingnode2 <- titlenode2
+    } else {
+        siblingnode2 <- linknodes2[length(linknodes2)]
+    }
+
+    # Move all the sibling nodes from 1 to 2
+    lapply(rev(linknodes1), \(node) xml2::xml_add_sibling(siblingnode2, node, .copy = FALSE))
+
+    # Remove the subtitle title node
+    xml2::xml_remove(titlenode1)
+
+    # Rewrite the index
+    write_index(index, index_path)
+
+}
+
+
+#' @export
+labbook_list_subtitles <- function() {
+
+    index <- read_index("../../index.html")
+    project <- get_index_project(index, readLines(".title"))
+    subtitles <- vapply(getSubtitleNodes(project), xml2::xml_text, character(1))
+    print(unname(data.frame(subtitles)))
+
+}
+
+

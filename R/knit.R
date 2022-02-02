@@ -233,6 +233,7 @@ out.h1 <- function(txt){
   out("<h1>")
   out(txt)
   out("</h1>")
+  # out(paste("\n#", txt))
 }
 
 #' @export
@@ -240,6 +241,7 @@ out.h2 <- function(txt){
   out("<h2>")
   out(txt)
   out("</h2>")
+  # out(paste("\n##", txt))
 }
 
 #' @export
@@ -247,6 +249,7 @@ out.h3 <- function(txt){
   out("<h3>")
   out(txt)
   out("</h3>")
+  # out(paste("\n###", txt))
 }
 
 #' @export
@@ -254,6 +257,7 @@ out.h4 <- function(txt){
   out("<h4>")
   out(txt)
   out("</h4>")
+  # out(paste("\n####", txt))
 }
 
 #' @export
@@ -270,6 +274,57 @@ escape_output <- function(...){
   cat(paste(c(escape_start, ..., escape_end), collapse = ""))
 }
 
+#' @export
+out.pageset <- function(...){
 
+  if (knitting()) {
+    out("<!--[[PAGESET_HEADER]]-->")
+    out("<div class='pageset-div'>")
+    list(...)
+    out("</div>")
+  } else {
+    list(...)
+  }
+  invisible(NULL)
 
+}
+
+#' @export
+out.page <- function(label, x){
+
+  if (knitting()) {
+
+    # Get the knitting environment
+    knit_env <- knitr::knit_global()
+
+    # Get the page being currently rendered
+    pagenum_rendering <- get0(".pagenum_rendering", knit_env, ifnotfound = 0)
+    pagelabels <- get0(".pagelabels", knit_env, ifnotfound = NULL)
+
+    # Get the page num and increment it
+    pagenum <- get0(".pagenum", knit_env, ifnotfound = 0)
+    pagenum <- pagenum + 1
+    assign(".pagenum", pagenum, envir = knit_env)
+
+    # Add the page label record
+    pagelabels <- c(pagelabels, label)
+    assign(".pagelabels", pagelabels, envir = knit_env)
+
+    # If the page number equals the page currently being rendered, render it!
+    if (pagenum == pagenum_rendering) {
+      out("<div class='page-div' label='", label,"'>", sep = "")
+      force(x)
+      out("</div>")
+    }
+
+  } else {
+
+    # Otherwise simply run it
+    force(x)
+
+  }
+
+  invisible(NULL)
+
+}
 

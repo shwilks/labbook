@@ -36,14 +36,92 @@ new_chunk <- function(chunk.name = NULL, args, language = "r") {
 
 }
 
+# Add a page number to a file name
+add_filepath_page <- function(filepath, pagenum) {
+  gsub("\\.html$", paste0("_p", pagenum, ".html"), filepath)
+}
+
+# Add the page links when multipage pages are rendered
+add_pagetab_links <- function(filepath, pagelinks, pagelabels) {
+
+  pagelinks <- basename(pagelinks)
+  pagenum <- which(pagelinks == basename(filepath))
+  filecontent <- readLines(filepath)
+  pagetabline <- grep("<!--[[PAGESET_HEADER]]-->", filecontent, fixed = T)
+
+  links <- lapply(seq_along(pagelinks), \(n){
+    htmltools::a(pagelabels[n], href = paste0(pagelinks[n], "#pagination-links"))
+  })
+  links[[pagenum]]$attribs$class <- "selected"
+  filecontent[pagetabline] <- gsub("\\n", "", as.character(htmltools::div(links, id = "pagination-links")))
+  writeLines(filecontent, filepath)
+
+}
+
 # Render in a new r session
-render_new_session <- function(...) {
+render_new_session <- function(output_file, ...) {
   callr::r(
-    func = function(...) rmarkdown::render(..., envir = globalenv()),
-    args = list(...),
+    func = function(output_file, ...) labbook:::render_same_session(output_file, ...),
+    args = c(list(output_file = output_file), list(...)),
     show = TRUE
   )
 }
+
+# Render in the same r session
+render_same_session <- function(output_file, ...) {
+
+  # Run a render loop through all the pages
+  npages <- 1
+  pagenum_rendering <- 0
+
+  # Keep a record of rendered pages
+  rendered_pages <- c()
+
+  while (pagenum_rendering < npages) {
+
+    # Setup environment
+    env <- new.env(parent = parent.frame())
+
+    # Set the page rendering number in the environment
+    pagenum_rendering <- pagenum_rendering + 1
+    env[[".pagenum_rendering"]] <- pagenum_rendering
+
+    # Change the filename output to reflect page number
+    if (pagenum_rendering > 1) {
+      output_file_page <- add_filepath_page(output_file, pagenum_rendering)
+    } else {
+      output_file_page <- output_file
+    }
+
+    # Do the actual page render
+    if (pagenum_rendering > 1) message(sprintf("Rendering '%s'", output_file_page))
+    rmarkdown::render(
+      output_file = output_file_page,
+      ...,
+      envir = env
+    )
+
+    # Fetch the number of pages
+    npages <- get0(".pagenum", env, ifnotfound = 1)
+    pagelabels <- get0(".pagelabels", env, ifnotfound = NULL)
+
+    # Record the rendered page
+    rendered_pages <- c(rendered_pages, output_file_page)
+
+  }
+
+  # Add pageset links if multiple pages were rendered
+  if (length(rendered_pages) > 1) {
+    x <- lapply(
+      rendered_pages,
+      add_pagetab_links,
+      pagelinks = rendered_pages,
+      pagelabels = pagelabels
+    )
+  }
+
+}
+
 
 # Render a currently open file
 render.file <- function() {
@@ -131,7 +209,8 @@ render.page <- function(
     headcontent    = NULL,
     headercontent  = NULL,
     cache          = FALSE,
-    async_widgets  = !standalone
+    async_widgets  = !standalone,
+    new_session    = TRUE
     ) {
 
     # Set default codepath
@@ -195,7 +274,8 @@ render.page <- function(
         embed_js       = embed_js,
         async_widgets  = async_widgets,
         add_index_link = add_index_link,
-        cache          = cache
+        cache          = cache,
+        new_session    = new_session
     )
     if (verbose) message("done.")
 
@@ -481,9 +561,9 @@ preprocess_codefile <- function(
 
     # Return meta data
     list(
-        title    = pagetitle,
-        subtitle = pagesubtitle,
-        tags     = tags
+        title      = pagetitle,
+        subtitle   = pagesubtitle,
+        tags       = tags
     )
 
 }
@@ -505,7 +585,8 @@ knit_markdown <- function(
     async_widgets  = !standalone,
     embed_js       = standalone,
     eval           = TRUE,
-    cache          = FALSE
+    cache          = FALSE,
+    new_session    = TRUE
 ) {
 
     # Set the library and cache location
@@ -636,6 +717,7 @@ knit_markdown <- function(
                 mathjax = NULL,
                 pandoc_args = "--mathml",
                 section_divs = TRUE,
+                anchor_sections = TRUE,
                 extra_dependencies = list(
                   htmldeps::html_dependency_jquery(),
                   htmltools::htmlDependency(
@@ -679,6 +761,7 @@ knit_markdown <- function(
                   htmldeps::html_dependency_jquery()
                 ),
                 # mathjax = "local",
+                anchor_sections = TRUE,
                 mathjax = NULL,
                 pandoc_args = "--mathml",
                 section_divs = TRUE
@@ -773,13 +856,27 @@ knit_markdown <- function(
     graphics.off()
 
     # Render the html page
-    render_new_session(
+    if (new_session) {
+
+      render_new_session(
         input = markdown_file,
         output_format = output_format,
         output_file = output_file,
         quiet = TRUE,
         knit_root_dir = getwd()
-    )
+      )
+
+    } else {
+
+      render_same_session(
+        input = markdown_file,
+        output_format = output_format,
+        output_file = output_file,
+        quiet = TRUE,
+        knit_root_dir = getwd()
+      )
+
+    }
 
     # Return the page details
     list(
