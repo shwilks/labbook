@@ -68,6 +68,8 @@ open_webpage <- function(html_path, make.front = TRUE){
     # Escape special characters
     tryCatch(
         expr  = {
+
+            # Mac
             system2(
                 command = "open",
                 args = c(
@@ -78,7 +80,25 @@ open_webpage <- function(html_path, make.front = TRUE){
             )
         },
         error = function(e){
-            system2("start", shQuote(path.expand(html_path)))
+
+            tryCatch(
+                expr  = {
+
+                    # Linux
+                    system2(
+                        command = "xdg-open",
+                        args = shQuote(path.expand(html_path)),
+                        wait = FALSE
+                    )
+                },
+                error = function(e){
+
+                    # Windows
+                    system2("start", shQuote(path.expand(html_path)))
+
+                }
+            )
+
         }
     )
 
