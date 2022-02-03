@@ -1,7 +1,7 @@
 Package: labbook
 Type: Package
 Title: Functions for maintaining a digital lab book with RStudio
-Version: 0.2.3
+Version: 0.2.4
 Author: S.H.Wilks
 Maintainer: S.H.Wilks <sw463@cam.ac.uk>
 Description: A package of functions for maintaining a digital lab book with RStudio
