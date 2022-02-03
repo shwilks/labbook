@@ -225,7 +225,7 @@ labbook_newpage <- function(openfile = TRUE) {
 labbook_clone_page <- function(ext = "_v2") {
     path <- rstudioapi::getSourceEditorContext()$path
     lines <- readLines(path)
-    lines[grep("###'", lines)] <- paste0(lines[grep("###'", lines)], ext)_v2
+    lines[grep("###'", lines)] <- paste0(lines[grep("###'", lines)], ext)
     newpath <- gsub("\\.([Rr])$", paste0(ext, ".\\1"), path)
     writeLines(lines, newpath)
     file.edit(newpath)
