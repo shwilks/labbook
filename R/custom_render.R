@@ -4,7 +4,7 @@
 labpage_render <- function(x, options, ...) {
 
     # Special behaviour for html widgets
-    if(inherits(x, "htmlwidget")){
+    if (!options$standalone && inherits(x, "htmlwidget")) {
 
         # Convert to html output with the options
         x <- htmlwidgets:::toHTML(x, knitrOptions = options)

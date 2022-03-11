@@ -1,5 +1,4 @@
 
-
 # Check if code is being called as part of knitting
 knitting <- function(){
     isTRUE(getOption('knitr.in.progress'))
@@ -42,17 +41,7 @@ out.plot <- function(code, fig_width=5, fig_height=7, out_height=NULL, out_width
                             "\n```
         ")
 
-        if(inline){
-            div <- "<div style='display:inline-block; vertical-align: top;'>"
-        } else {
-            div <- "<div>"
-        }
-
-        out(paste0(
-          div,
-          gsub("\n", "", knitr::knit(text = knitr::knit_expand(text = sub_chunk)), fixed = T),
-          "</div>"
-        ))
+        out(knitr::knit(text = knitr::knit_expand(text = sub_chunk)))
 
     } else {
         print(code)
@@ -194,7 +183,6 @@ out.tag <- function(x) {
 
 }
 
-
 #' @export
 out.pre <- function(textlines){
 
@@ -265,7 +253,6 @@ out.link <- function(path){
   if(!file.exists(path)) stop(sprintf("File '%s' not found.", path))
   file.path("..", path)
 }
-
 
 escape_start <- "[[[["
 escape_end   <- "]]]]"

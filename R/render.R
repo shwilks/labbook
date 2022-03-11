@@ -721,7 +721,7 @@ knit_markdown <- function(
                 extra_dependencies = list(
                   htmldeps::html_dependency_jquery(),
                   htmltools::htmlDependency(
-                    name = "Racmacs",
+                    name = "labbook",
                     version = "1.0.11",
                     src = system.file("labbook/library", package = "labbook"),
                     script = c(
@@ -777,6 +777,7 @@ knit_markdown <- function(
     output_format$knitr$opts_chunk$class.warning = 'code-block code-output warning-code'
     output_format$knitr$opts_chunk$class.output  = 'code-block code-output output-code'
     output_format$knitr$opts_chunk$class.message = 'code-block code-output message-code'
+    output_format$knitr$opts_chunk$standalone    = standalone
     # output_format$knitr$opts_chunk$fig.keep      = 'high'
     output_format$knitr$opts_chunk$message       = FALSE
     output_format$knitr$opts_chunk$warning       = FALSE
