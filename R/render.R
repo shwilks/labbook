@@ -221,10 +221,11 @@ render.page <- function(
     # Exit if no valid codepath found
     if (codepath == "") return()
 
+    codefile_depth <- labbook:::get.codefile.depth(codepath)
     # Parse code path
     codepath      <- normalizePath(codepath)
     codename      <- basename(codepath)
-    codedir       <- dirname(codepath)
+    codedir       <- do.call(file.path, as.list(c(dirname(codepath), rep('..', codefile_depth))))
     projectdir    <- file.path(codedir, "..")
     index_path    <- file.path(codedir, "..", "..", "..", "index.html")
     library_path  <- file.path(codedir, "..", "..", "..", "library")

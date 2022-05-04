@@ -119,3 +119,7 @@ make_page_id <- function(){
     paste(sample(hexdec, 12, replace = T), collapse = "")
 }
 
+get.codefile.depth = function(path){
+    path_split = stringr::str_split(path, stringr::fixed('/'))[[1]]
+    which(rev(path_split) == 'code') - 2
+}
