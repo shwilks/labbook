@@ -62,8 +62,8 @@ open_webpage <- function(html_path, make.front = TRUE){
     }
 
     # Set args
-    if(make.front) additional.args = NULL
-    else           additional.args = "-g"
+    if (make.front) additional.args = NULL
+    else            additional.args = "-g"
 
     # Escape special characters
     tryCatch(
