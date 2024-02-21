@@ -25,12 +25,18 @@ index_pages <- function(){
                 page_title <- ""
             }
 
+            page_content <- list(
+                content = list(),
+                code = list()
+            )
+
             if(pageinfo$size > 1e7){
+
                 warning(sprintf("Skipped page '%s'", page), call. = FALSE, immediate. = TRUE)
-                content <- list()
-                code <- list()
+
             } else {
-                tryCatch({
+
+                page_content <- tryCatch({
 
                     # Read content
                     html       <- xml2::read_html(pathpage)
@@ -46,10 +52,20 @@ index_pages <- function(){
                     codenode <- xml2::xml_find_all(html, "//pre[contains(concat(' ', @class, ' '), ' page-code ')]")
                     code <- strsplit(xml2::xml_text(codenode), "\\n")[[1]]
 
+                    list(
+                        content = content,
+                        code = code
+                    )
+
                 }, error = function(e){
+
                     warning(sprintf("When indexing pages, unable to parse page '%s'", page), call. = FALSE)
-                    content <- list()
-                    code <- list()
+
+                    list(
+                        content = list(),
+                        code = list()
+                    )
+
                 })
 
             }
@@ -58,8 +74,8 @@ index_pages <- function(){
                 page_path  = basename(pathpage),
                 page_title = page_title,
                 mtime      = as.character(as.Date(pageinfo$mtime)),
-                content    = content,
-                code       = code
+                content    = page_content$content,
+                code       = page_content$code
             )
 
         })
