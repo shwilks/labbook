@@ -629,7 +629,7 @@ knit_markdown <- function(
                 '<link href="../.lib/styles/general.css" rel="stylesheet"/>',
                 '<link href="../.lib/styles/shared.css" rel="stylesheet"/>',
                 '<link href="../.lib/styles/page.css" rel="stylesheet"/>',
-                '<link href="../.lib/styles/labpage.css" rel="stylesheet"/>',
+                '<link href="../.lib/styles/extra.css" rel="stylesheet"/>',
                 '<script src="../.lib/tags.js"></script>',
                 '<script src="../.lib/scripts/page.js"></script>'
             )
@@ -731,7 +731,8 @@ knit_markdown <- function(
                     stylesheet = c(
                       "styles/general.css",
                       "styles/shared.css",
-                      "styles/page.css"
+                      "styles/page.css",
+                      "styles/extra.css"
                     )
                   )
                 ),
