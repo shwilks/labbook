@@ -121,5 +121,7 @@ make_page_id <- function(){
 
 get.codefile.depth = function(path){
     path_split = stringr::str_split(path, stringr::fixed('/'))[[1]]
-    which(rev(path_split) == 'code') - 2
+    depth <- which(rev(path_split) == 'code') - 2
+    if (length(depth) == 0) depth <- 0
+    depth
 }
