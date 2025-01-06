@@ -61,6 +61,10 @@ out <- function(...){
 
 }
 
+out.html <- function(...) {
+    out(htmltools::htmlPreserve(paste(..., collapse = "")))
+}
+
 #' @export
 out.table <- function(x, scale = 1, escape = TRUE, ...){
 
@@ -96,9 +100,9 @@ out.collapsible <- function(label, x){
 out.tabset <- function(...){
 
     if (knitting()) {
-        out("<div class='tabset-div'>")
+        out.html("<div class='tabset-div'>")
         list(...)
-        out("</div>")
+        out.html("</div>")
     } else {
         list(...)
     }
@@ -110,9 +114,9 @@ out.tabset <- function(...){
 out.tab <- function(label, x){
 
     if (knitting()) {
-        out("<div class='tab-div' label='", label,"'>", sep = "")
+        out.html("<div class='tab-div' label='", label,"'>", sep = "")
         force(x)
-        out("</div>")
+        out.html("</div>")
     } else {
         force(x)
     }
@@ -124,9 +128,9 @@ out.tab <- function(label, x){
 out.div <- function(...){
 
     if (knitting()) {
-        out("<div>")
+        out.html("<div>")
         list(...)
-        out("</div>")
+        out.html("</div>")
     } else {
         list(...)
     }
@@ -138,9 +142,9 @@ out.div <- function(...){
 out.flexdiv <- function(...){
 
   if (knitting()) {
-    out("<div style='display:flex;'>")
+    out.html("<div style='display:flex;'>")
     list(...)
-    out("</div>")
+    out.html("</div>")
   } else {
     list(...)
   }
@@ -158,7 +162,7 @@ out.inlinediv <- function(
 ){
 
   if (knitting()) {
-    out(
+    out.html(
       sprintf(
         "<div style='display:inline-block; margin:%spx %spx %spx %spx;'>",
         margin.top,
@@ -168,7 +172,7 @@ out.inlinediv <- function(
       )
     )
     list(...)
-    out("</div>")
+    out.html("</div>")
   } else {
     list(...)
   }
@@ -218,33 +222,33 @@ out.p <- function(...){
 
 #' @export
 out.h1 <- function(txt){
-  out("<h1>")
+  out.html("<h1>")
   out(txt)
-  out("</h1>")
+  out.html("</h1>")
   # out(paste("\n#", txt))
 }
 
 #' @export
 out.h2 <- function(txt){
-  out("<h2>")
+  out.html("<h2>")
   out(txt)
-  out("</h2>")
+  out.html("</h2>")
   # out(paste("\n##", txt))
 }
 
 #' @export
 out.h3 <- function(txt){
-  out("<h3>")
+  out.html("<h3>")
   out(txt)
-  out("</h3>")
+  out.html("</h3>")
   # out(paste("\n###", txt))
 }
 
 #' @export
 out.h4 <- function(txt){
-  out("<h4>")
+  out.html("<h4>")
   out(txt)
-  out("</h4>")
+  out.html("</h4>")
   # out(paste("\n####", txt))
 }
 
