@@ -200,6 +200,7 @@ render.page <- function(
     pagetitle      = NULL,
     pagesubtitle   = NULL,
     add_index_link = TRUE,
+    index_path     = NULL,
     eval           = TRUE,
     openpage       = TRUE,
     verbose        = FALSE,
@@ -210,7 +211,8 @@ render.page <- function(
     headercontent  = NULL,
     cache          = FALSE,
     async_widgets  = !standalone,
-    new_session    = TRUE
+    new_session    = TRUE,
+    markdown_path  = NULL
     ) {
 
     # Set default codepath
@@ -221,16 +223,17 @@ render.page <- function(
     # Exit if no valid codepath found
     if (codepath == "") return()
 
-    codefile_depth <- labbook:::get.codefile.depth(codepath)
+    codefile_depth <- get.codefile.depth(codepath)
+
     # Parse code path
     codepath      <- normalizePath(codepath)
     codename      <- basename(codepath)
     codedir       <- do.call(file.path, as.list(c(dirname(codepath), rep('..', codefile_depth))))
     projectdir    <- file.path(codedir, "..")
-    index_path    <- file.path(codedir, "..", "..", "..", "index.html")
     library_path  <- file.path(codedir, "..", "..", "..", "library")
     template_path <- file.path(library_path, "templates")
     tags_path     <- file.path(library_path, "tags.js")
+    if (is.null(index_path)) index_path <- file.path(codedir, "..", "..", "..", "index.html")
 
     # Message that knitting is in progress
     if (verbose) message("Start rendering")
@@ -249,8 +252,15 @@ render.page <- function(
         pagetitle         = pagetitle,
         pagesubtitle      = pagesubtitle
     )
-    # system(sprintf("open -a 'RStudio' %s", shQuote(markdown_file)))
     if (verbose) message("done.")
+
+    # Copy the markdown file if specified
+    if (!is.null(markdown_path)) {
+        file.copy(
+            markdown_file,
+            markdown_path
+        )
+    }
 
     # Set default pagepath
     if (is.null(pagepath)) {
@@ -731,8 +741,7 @@ knit_markdown <- function(
                     stylesheet = c(
                       "styles/general.css",
                       "styles/shared.css",
-                      "styles/page.css",
-                      "styles/extra.css"
+                      "styles/page.css"
                     )
                   )
                 ),
