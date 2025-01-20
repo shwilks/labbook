@@ -1,4 +1,3 @@
-
 ##' Subtitle one
 ###' A fourth example page
 #' @tag1

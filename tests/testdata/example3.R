@@ -1,4 +1,3 @@
-
 ###' A third example page
 #'
 #' ## Aim

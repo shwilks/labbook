@@ -1,4 +1,3 @@
-
 ##' Subtitle one
 ###' A first example page
 #'
@@ -22,4 +21,3 @@ plot(cars)
 #' that should show this text on a new line
 #'
 #'
-
