@@ -4,13 +4,15 @@
 #' @param labbook.dir The directory in which to create the labbook (defaults to the current working directory)
 #' @param labbook.title The name for the labbook (e.g. "Sam's labbook")
 #' @param project.title The name for the first project
+#' @param labbook.dirname The directory name for your labbook (default: "labbook")
 #'
 #' @export
 #'
 labbook.init <- function(
     labbook.dir,
     labbook.title,
-    project.title
+    project.title,
+    labbook.dirname = "labbook"
 ){
 
     # Check args
@@ -18,7 +20,7 @@ labbook.init <- function(
     if(missing(project.title)) stop("Please enter a name for the first project")
 
     # Create the directory
-    labbook.path <- file.path(labbook.dir, "labbook")
+    labbook.path <- file.path(labbook.dir, labbook.dirname)
     if(file.exists(labbook.path)) stop("A labbook directory already exists at this location")
     dir.create(labbook.path)
 
@@ -74,7 +76,7 @@ labbook.init <- function(
 labbook.newProject <- function(
     project.title,
     project.dir = NULL,
-    labbook.path
+    labbook.path = "../../"
 ){
 
     # Check args

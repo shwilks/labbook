@@ -4,7 +4,7 @@
 \alias{labbook.newProject}
 \title{Create a new labbook project}
 \usage{
-labbook.newProject(project.title, project.dir = NULL, labbook.path)
+labbook.newProject(project.title, project.dir = NULL, labbook.path = "../../")
 }
 \arguments{
 \item{project.title}{The project title}

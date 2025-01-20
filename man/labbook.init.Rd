@@ -4,7 +4,12 @@
 \alias{labbook.init}
 \title{Initiate a new labbook}
 \usage{
-labbook.init(labbook.dir, labbook.title, project.title)
+labbook.init(
+  labbook.dir,
+  labbook.title,
+  project.title,
+  labbook.dirname = "labbook"
+)
 }
 \arguments{
 \item{labbook.dir}{The directory in which to create the labbook (defaults to the current working directory)}
@@ -12,6 +17,8 @@ labbook.init(labbook.dir, labbook.title, project.title)
 \item{labbook.title}{The name for the labbook (e.g. "Sam's labbook")}
 
 \item{project.title}{The name for the first project}
+
+\item{labbook.dirname}{The directory name for your labbook (default: "labbook")}
 }
 \description{
 Initiate a new labbook
