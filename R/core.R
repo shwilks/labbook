@@ -125,7 +125,7 @@ labbook.newPage <- function(
     project.dir = NULL,
     openfile = TRUE,
     overwrite = FALSE) {
-  # Check for filename
+  # Check for file name
   if (missing(filename)) {
     stop("Please provide a filename")
   }
