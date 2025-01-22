@@ -64,36 +64,35 @@ open_webpage <- function(html_path, make.front = TRUE) {
     additional.args <- "-g"
   }
 
-  # Escape special characters
-  tryCatch(
-    expr = {
+  # Open the webpage
+  if (.Platform$OS.type == "windows") {
+
+      # Windows
+      system2("start", shQuote(path.expand(html_path)))
+
+  } else if (Sys.info()["sysname"] == "Darwin") {
+
       # Mac
       system2(
-        command = "open",
-        args = c(
-          shQuote(additional.args),
-          shQuote(path.expand(html_path))
-        ),
-        wait = FALSE
+          command = "open",
+          args = c(
+              shQuote(additional.args),
+              shQuote(path.expand(html_path))
+          ),
+          wait = FALSE
       )
-    },
-    error = function(e) {
-      tryCatch(
-        expr = {
-          # Linux
-          system2(
-            command = "xdg-open",
-            args = shQuote(path.expand(html_path)),
-            wait = FALSE
-          )
-        },
-        error = function(e) {
-          # Windows
-          system2("start", shQuote(path.expand(html_path)))
-        }
+
+  } else {
+
+      # Linux
+      system2(
+          command = "xdg-open",
+          args = shQuote(path.expand(html_path)),
+          wait = FALSE
       )
-    }
-  )
+
+  }
+
 }
 
 #' @export
