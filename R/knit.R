@@ -15,34 +15,62 @@ div <- function(...) {
 }
 
 #' @export
-out.plot <- function(code, fig_width = 5, fig_height = 7, out_height = NULL, out_width = NULL, inline = FALSE) {
-  if (!is.null(out_width) && is.null(out_height)) out_height <- out_width * (fig_height / fig_width)
-  if (is.null(out_width) && !is.null(out_height)) out_width <- out_height * (fig_width / fig_height)
+out.plot <- function(
+    code,
+    fig_width = 5,
+    fig_height = 7,
+    out_height = NULL,
+    out_width = NULL,
+    inline = FALSE
+    ) {
 
-  if (knitting()) {
-    g_deparsed <- paste0("function(){ ", deparse(substitute(code, env = parent.frame())), "}")
+    # Check input
+    checkmate::assert_number(fig_width, null.ok = T)
+    checkmate::assert_number(fig_height, null.ok = T)
+    checkmate::assert_number(out_height, null.ok = T)
+    checkmate::assert_number(out_width, null.ok = T)
+    checkmate::assert_flag(inline)
 
-    if (is.null(out_height)) out_height <- "NULL"
-    if (is.null(out_width)) out_width <- "NULL"
+    # Set default plot width and height in pixels
+    if (!is.null(out_width) && is.null(out_height)) {
+        out_height <- out_width * (fig_height / fig_width)
+    }
 
-    sub_chunk <- paste0(
-      "```{r ", parent.frame()$`.chunk-label`, "_subchunk", sample(1:1000000000, 1),
-      ", fig.height=", fig_height,
-      ", fig.width=", fig_width,
-      ", out.height=", out_height,
-      ", out.width=", out_width,
-      ", echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, render=labpage_render}",
-      "\n(",
-      g_deparsed,
-      ")()",
-      "\n```
-        "
-    )
+    if (is.null(out_width) && !is.null(out_height)) {
+        out_width <- out_height * (fig_width / fig_height)
+    }
 
-    out(knitr::knit(text = knitr::knit_expand(text = sub_chunk)))
-  } else {
-    print(code)
-  }
+    if (knitting()) {
+
+        g_deparsed <- paste0("function(){ ", deparse(substitute(code, env = parent.frame())), "}")
+
+        if (is.null(out_height)) out_height <- "NULL"
+        if (is.null(out_width)) out_width <- "NULL"
+
+        sub_chunk <- paste0(
+            "```{r ", parent.frame()$`.chunk-label`, "_subchunk", sample(1:1000000000, 1),
+            ", fig.height=", fig_height,
+            ", fig.width=", fig_width,
+            ", out.height=", out_height,
+            ", out.width=", out_width,
+            ", echo=FALSE, warning=FALSE, message=FALSE, error=FALSE, render=labpage_render}",
+            "\n(",
+            g_deparsed,
+            ")()",
+            "\n```
+            "
+        )
+
+        out.html("<div class='plot-div'>")
+        out(knitr::knit(text = knitr::knit_expand(text = sub_chunk)))
+        out.html("</div>")
+
+    } else {
+
+        print(code)
+
+    }
+
 }
 
 #' @export
