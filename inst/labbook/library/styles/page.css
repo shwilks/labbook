@@ -14,6 +14,12 @@ p {
   max-width: 996px;
 }
 
+.plot-div > p {
+  margin: 0;
+  padding: 0;
+  max-width: none;
+}
+
 .text-section {
   max-width: 996px;
 }
