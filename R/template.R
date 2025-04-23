@@ -8,7 +8,9 @@ render.pagetemplate <- function(
     template,
     codepath,
     vars,
-    as.job = TRUE) {
+    as.job = TRUE,
+    ...
+    ) {
   # Read the template
   templatelines <- readLines(template)
 
@@ -27,8 +29,8 @@ render.pagetemplate <- function(
 
   # Render the page
   if (as.job) {
-    render.page.job(normalizePath(codepath))
+    render.page.job(normalizePath(codepath), ...)
   } else {
-    render.page(normalizePath(codepath))
+    render.page(normalizePath(codepath), ...)
   }
 }
