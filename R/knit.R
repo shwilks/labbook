@@ -94,9 +94,9 @@ out.table <- function(x, scale = 1, escape = TRUE, ...) {
     if (escape) {
       x[] <- apply(x, 1:2, gsub, pattern = "*", replacement = "\\*", fixed = TRUE)
     }
-    out(sprintf("<div style='font-size:%s'>", paste0(scale * 100, "%")))
-    out(knitr::kable(x, format = "html", escape = escape, ...))
-    out("</div>")
+    out.html(sprintf("<div style='font-size:%s'>", paste0(scale * 100, "%")))
+    out.html(knitr::kable(x, format = "html", escape = escape, ...))
+    out.html("</div>")
   } else {
     print(x)
   }
