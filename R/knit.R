@@ -116,9 +116,27 @@ out.collapsible <- function(label, x) {
 }
 
 #' @export
-out.tabset <- function(...) {
+out.tabset <- function(..., cyclable = NULL, id = NULL) {
+
+  if (is.null(cyclable)) cyclable <- is.null(id)
+
+  cyclable_class <- ifelse(
+    cyclable,
+    "tabset-cyclable",
+    ""
+  )
+
+  id_txt <- ifelse(
+      is.null(id),
+      "",
+      sprintf(
+          "id='%s'",
+          htmltools::htmlEscape(id, attribute = T)
+      )
+  )
+
   if (knitting()) {
-    out.html("<div class='tabset-div'>")
+    out.html("<div class='tabset-div ", cyclable_class, "' ", id_txt, ">")
     list(...)
     out.html("</div>")
   } else {
@@ -130,7 +148,7 @@ out.tabset <- function(...) {
 #' @export
 out.tab <- function(label, x) {
   if (knitting()) {
-    out.html("<div class='tab-div' label='", label, "'>", sep = "")
+    out.html("<div class='tab-div' label='", htmltools::htmlEscape(label, attribute = T), "'>", sep = "")
     force(x)
     out.html("</div>")
   } else {
@@ -149,6 +167,17 @@ out.div <- function(...) {
     list(...)
   }
   invisible(NULL)
+}
+
+out.plotdiv <- function(...) {
+    if (knitting()) {
+        out.html("<div class='plot-div'>")
+        list(...)
+        out.html("</div>")
+    } else {
+        list(...)
+    }
+    invisible(NULL)
 }
 
 #' @export
@@ -213,9 +242,9 @@ out.pre <- function(textlines) {
 #' @export
 out.p <- function(...) {
   if (knitting()) {
-    out("<p>")
+    out.html("<p>")
     out(...)
-    out("</p>")
+    out.html("</p>")
   } else {
     list(...)
   }
