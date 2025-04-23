@@ -54,7 +54,7 @@ add_pagetab_links <- function(filepath, pagelinks, pagelabels) {
 }
 
 # Render in a new r session
-render_new_session <- function(output_file, ...) {
+render_new_session <- function(output_file, parent_env = parent.frame(), ...) {
   callr::r(
     func = function(output_file, ...) labbook:::render_same_session(output_file, ...),
     args = c(list(output_file = output_file), list(...)),
@@ -63,7 +63,7 @@ render_new_session <- function(output_file, ...) {
 }
 
 # Render in the same r session
-render_same_session <- function(output_file, ...) {
+render_same_session <- function(output_file, parent_env = parent.frame(), ...) {
   # Run a render loop through all the pages
   npages <- 1
   pagenum_rendering <- 0
@@ -73,7 +73,7 @@ render_same_session <- function(output_file, ...) {
 
   while (pagenum_rendering < npages) {
     # Setup environment
-    env <- new.env(parent = parent.frame())
+    env <- new.env(parent = parent_env)
 
     # Set the page rendering number in the environment
     pagenum_rendering <- pagenum_rendering + 1
@@ -153,7 +153,8 @@ render.filetext <- function() {
 
 # Render the page as a job
 #' @export
-render.page.job <- function(codepath) {
+render.page.job <- function(codepath,
+                            keep_editor_focus = getOption("labbook.keep_focus_on_render", FALSE)) {
   # Get page title
   code <- readLines(codepath)
   pgtitle <- code[grep("^###'", code)]
@@ -166,7 +167,7 @@ render.page.job <- function(codepath) {
     c(
       sprintf("cat('Rendering \"%s\"')", pgtitle),
       'cat(" ")',
-      sprintf('labbook::render.page("%s")', codepath)
+      sprintf('labbook::render.page("%s", keep_editor_focus=%s)', codepath, keep_editor_focus)
     ),
     tmp
   )
@@ -201,7 +202,9 @@ render.page <- function(
     cache = FALSE,
     async_widgets = !standalone,
     new_session = TRUE,
-    markdown_path = NULL) {
+    markdown_path = NULL,
+    keep_editor_focus = getOption("labbook.keep_focus_on_render", FALSE),
+    parent_env = parent.frame()) {
   # Set default codepath
   if (is.null(codepath)) {
     codepath <- rstudioapi::getActiveDocumentContext()$path
@@ -275,14 +278,15 @@ render.page <- function(
     async_widgets  = async_widgets,
     add_index_link = add_index_link,
     cache          = cache,
-    new_session    = new_session
+    new_session    = new_session,
+    parent_env     = parent_env
   )
   if (verbose) message("done.")
 
   # Try and open the page
   if (openpage) {
     if (verbose) message("Opening webpage...", appendLF = FALSE)
-    open_webpage(pagepath, make.front = FALSE)
+    open_webpage(pagepath, keep_editor_focus = keep_editor_focus)
     if (verbose) message("done.")
   }
 
@@ -351,14 +355,13 @@ render.page <- function(
 }
 
 # Pre process a markdown file
-preprocess_codefile <- function(
-    code_file,
-    include_code_link = TRUE,
-    markdown_output,
-    pagetitle = NULL,
-    pagesubtitle = NULL,
-    skipfromstop = TRUE,
-    eval = TRUE) {
+preprocess_codefile <- function(code_file,
+                                include_code_link = TRUE,
+                                markdown_output,
+                                pagetitle = NULL,
+                                pagesubtitle = NULL,
+                                skipfromstop = TRUE,
+                                eval = TRUE) {
   # Set the language
   fileext <- tolower(gsub("^.*\\.", "", code_file))
   language <- switch(fileext,
@@ -553,23 +556,23 @@ preprocess_codefile <- function(
 
 
 # Knit a markdown file
-knit_markdown <- function(
-    markdown_file,
-    output_file,
-    project_path,
-    index_path,
-    page_title,
-    page_tags,
-    add_index_link = TRUE,
-    codetoggle = TRUE,
-    headercontent = NULL,
-    headcontent = NULL,
-    standalone = FALSE,
-    async_widgets = !standalone,
-    embed_js = standalone,
-    eval = TRUE,
-    cache = FALSE,
-    new_session = TRUE) {
+knit_markdown <- function(markdown_file,
+                          output_file,
+                          project_path,
+                          index_path,
+                          page_title,
+                          page_tags,
+                          add_index_link = TRUE,
+                          codetoggle = TRUE,
+                          headercontent = NULL,
+                          headcontent = NULL,
+                          standalone = FALSE,
+                          async_widgets = !standalone,
+                          embed_js = standalone,
+                          eval = TRUE,
+                          cache = FALSE,
+                          new_session = TRUE,
+                          parent_env = parent.frame()) {
   # Set the library and cache location
   lib_dir <- file.path(dirname(output_file), ".lib")
   cache_dir <- gsub("\\.html$", "_cache/", output_file)
@@ -838,7 +841,8 @@ knit_markdown <- function(
       output_format = output_format,
       output_file = output_file,
       quiet = TRUE,
-      knit_root_dir = getwd()
+      knit_root_dir = getwd(),
+      parent_env = parent_env
     )
   } else {
     render_same_session(
@@ -846,7 +850,8 @@ knit_markdown <- function(
       output_format = output_format,
       output_file = output_file,
       quiet = TRUE,
-      knit_root_dir = getwd()
+      knit_root_dir = getwd(),
+      parent_env = parent_env
     )
   }
 
@@ -859,10 +864,9 @@ knit_markdown <- function(
 
 
 #' @export
-rerender.pagetext <- function(
-    codepath = NULL,
-    pagepath = NULL,
-    openpage = TRUE) {
+rerender.pagetext <- function(codepath = NULL,
+                              pagepath = NULL,
+                              openpage = TRUE) {
   # Set default codepath
   if (is.null(codepath)) {
     codepath <- rstudioapi::getActiveDocumentContext()$path
@@ -944,6 +948,6 @@ rerender.pagetext <- function(
 
   # Try and open the page
   if (openpage) {
-    open_webpage(pagepath, make.front = FALSE)
+    open_webpage(pagepath, keep_editor_focus = FALSE)
   }
 }
