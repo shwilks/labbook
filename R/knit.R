@@ -90,6 +90,7 @@ out.html <- function(...) {
 
 #' @export
 out.table <- function(x, scale = 1, escape = TRUE, ...) {
+  if (is.null(dim(x))) x <- cbind(x) # Convert vectors to a column
   if (knitting()) {
     if (escape) {
       x[] <- apply(x, 1:2, gsub, pattern = "*", replacement = "\\*", fixed = TRUE)
