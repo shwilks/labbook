@@ -67,7 +67,7 @@ render.note <- function(
 
   # Try and open the page
   if (openpage) {
-    open_webpage(pagepath, make.front = FALSE)
+    open_webpage(pagepath, keep_editor_focus = FALSE)
   }
 
   # Update the index page
