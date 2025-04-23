@@ -49,7 +49,9 @@ intermediate.dirs <- function(dir, parent) {
 }
 
 # Function for viewing webpage associated with current code document
-open_webpage <- function(html_path, make.front = TRUE) {
+open_webpage <- function(
+    html_path,
+    keep_editor_focus = getOption("labbook.keep_focus_on_render", FALSE)) {
   if (missing(html_path)) {
     doc_info <- rstudioapi::getActiveDocumentContext()
     code_path <- doc_info$path
@@ -58,41 +60,34 @@ open_webpage <- function(html_path, make.front = TRUE) {
   }
 
   # Set args
-  if (make.front) {
-    additional.args <- NULL
-  } else {
+  if (keep_editor_focus) {
     additional.args <- "-g"
+  } else {
+    additional.args <- NULL
   }
 
   # Open the webpage
   if (.Platform$OS.type == "windows") {
-
-      # Windows
-      system2("start", shQuote(path.expand(html_path)))
-
+    # Windows
+    system2("start", shQuote(path.expand(html_path)))
   } else if (Sys.info()["sysname"] == "Darwin") {
-
-      # Mac
-      system2(
-          command = "open",
-          args = c(
-              shQuote(additional.args),
-              shQuote(path.expand(html_path))
-          ),
-          wait = FALSE
-      )
-
+    # Mac
+    system2(
+      command = "open",
+      args = c(
+        shQuote(additional.args),
+        shQuote(path.expand(html_path))
+      ),
+      wait = FALSE
+    )
   } else {
-
-      # Linux
-      system2(
-          command = "xdg-open",
-          args = shQuote(path.expand(html_path)),
-          wait = FALSE
-      )
-
+    # Linux
+    system2(
+      command = "xdg-open",
+      args = shQuote(path.expand(html_path)),
+      wait = FALSE
+    )
   }
-
 }
 
 #' @export
