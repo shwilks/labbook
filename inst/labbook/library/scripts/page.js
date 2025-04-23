@@ -2,18 +2,18 @@
 // Morph shape class
 class MorphShape {
 
-  constructor(paths){
+  constructor(paths) {
 
     this.paths = paths;
     this.keyTimes = [0];
-    for(var i=1; i<paths.length; i++){
-      this.keyTimes.push(this.keyTimes[i-1] + 1/(paths.length-1));
+    for (var i = 1; i < paths.length; i++) {
+      this.keyTimes.push(this.keyTimes[i - 1] + 1 / (paths.length - 1));
     }
     this.keySplines = Array(paths.length - 1).fill(".5,0,1,1");
 
     var svg = `
     <svg width="100%" viewbox="0 0 417 417">
-      <path style="fill:currentColor" d='`+paths[0]+`'>
+      <path style="fill:currentColor" d='`+ paths[0] + `'>
       </path>
     </svg>
     `;
@@ -24,19 +24,19 @@ class MorphShape {
 
   }
 
-  toggle(){
+  toggle() {
 
     this.div.innerHTML = `
       <svg width="100%" viewbox="0 0 417 417">
-        <path style="fill:currentColor" d='`+this.paths[0]+`'>
+        <path style="fill:currentColor" d='`+ this.paths[0] + `'>
         <animate
           attributeName="d"
           dur="600ms"
           repeatCount=1
-          keyTimes="`+this.keyTimes.join(';')+`"
+          keyTimes="`+ this.keyTimes.join(';') + `"
           calcMode="spline"
-          keySplines="`+this.keySplines.join(';')+`"
-          values="`+this.paths.join(';')+`"
+          keySplines="`+ this.keySplines.join(';') + `"
+          values="`+ this.paths.join(';') + `"
           fill="freeze"
           />
       </svg>
@@ -48,7 +48,7 @@ class MorphShape {
 }
 
 
-function linkToOnlinePage(){
+function linkToOnlinePage() {
 
   var page_breadcrumb = $("#page-link");
   var local_path = window.location.href;
@@ -67,7 +67,7 @@ function linkToOnlinePage(){
   page_breadcrumb.addClass("outdated-link");
 
   var page_id = $("#page-id").html();
-  var page_id_png_path = online_path.replace(/\.html$/, "_files")+"/"+page_id+".png";
+  var page_id_png_path = online_path.replace(/\.html$/, "_files") + "/" + page_id + ".png";
   var page_id_png = $("<img>").attr("src", page_id_png_path);
   page_id_png.on("load", f => {
     page_breadcrumb.removeClass("outdated-link");
@@ -97,15 +97,15 @@ function linkToOnlinePage(){
 
 
 // Code toggle function
-function addCodeToggle(){
+function addCodeToggle() {
 
   // Add code show hide options
   $("#codetoggle").html("Show inline code");
-  $("#codetoggle").click(function(){
+  $("#codetoggle").click(function () {
 
     var code_chunks = document.getElementsByClassName("code-output");
-    for(var i=0; i<code_chunks.length; i++){
-      if(code_chunks[i].style.display == "block"){
+    for (var i = 0; i < code_chunks.length; i++) {
+      if (code_chunks[i].style.display == "block") {
         code_chunks[i].style.display = "none";
         $("#codetoggle").html("Show inline code");
       } else {
@@ -119,16 +119,16 @@ function addCodeToggle(){
 }
 
 
-function activateCollapsibleDivs(){
+function activateCollapsibleDivs() {
 
-  $(".collapsible-div").each(function(i, el){
+  $(".collapsible-div").each(function (i, el) {
 
     var content = $(this);
     var toggle = $('<div/>');
     toggle.addClass('collapsible-div-toggle');
     toggle.insertBefore(content);
 
-    var label = $('<div>'+$(this).attr('label')+'</div>');
+    var label = $('<div>' + $(this).attr('label') + '</div>');
     label.addClass('collapsible-div-pill');
     label.addClass('unselectable');
     toggle.append(label);
@@ -141,7 +141,7 @@ function activateCollapsibleDivs(){
     arrow.div.classList.add("collapsible-div-arrow");
     toggle.append(arrow.div);
 
-    $(toggle).click(function(){
+    $(toggle).click(function () {
       arrow.toggle();
       content.delay(600).fadeToggle(800);
     });
@@ -151,17 +151,17 @@ function activateCollapsibleDivs(){
 }
 
 
-function linkImages(){
+function linkImages() {
 
-  $("img").each(function(){
+  $("img").each(function () {
     var src = $(this).attr("src");
-    $(this).wrap('<a href="'+src+'"></a>');
+    $(this).wrap('<a href="' + src + '"></a>');
   });
 
 }
 
 // Linking code files
-function linkCodeFiles(){
+function linkCodeFiles() {
 
   // Set pattern for filename and record for any files found
   var pattern = /.\.[^\s\/]+$/;
@@ -170,41 +170,41 @@ function linkCodeFiles(){
   $("#code-download-link").after(filesused);
 
   // Loop through strings
-  $(".page-code").find(".hljs-string").each(function(i, el){
+  $(".page-code").find(".hljs-string").each(function (i, el) {
 
     var string = el.innerHTML;
-    if(pattern.test(string)){
-      var stringstart   = string.substring(0, 1);
-      var stringend     = string.substring(string.length-1, string.length);
+    if (pattern.test(string)) {
+      var stringstart = string.substring(0, 1);
+      var stringend = string.substring(string.length - 1, string.length);
       var stringcontent = string.substring(1, string.length - 1);
-      var path = "../"+stringcontent;
+      var path = "../" + stringcontent;
 
       // Check if file exists
       $.ajax({
-          url: path,
-          type:'HEAD',
-          success: function() {
+        url: path,
+        type: 'HEAD',
+        success: function () {
 
-              // Insert a link
-              // el.innerHTML = stringstart
-              //                + "<a href='" + path + "'>"
-              //                + stringcontent
-              //                + "</a>" + stringend;
-              //
-              // el.classList.add("linked-string");
+          // Insert a link
+          // el.innerHTML = stringstart
+          //                + "<a href='" + path + "'>"
+          //                + stringcontent
+          //                + "</a>" + stringend;
+          //
+          // el.classList.add("linked-string");
 
-              // Add to the files used div
-              var filediv  = document.createElement("div");
-              var pattern  = /[^\/\s]+\.[^\/\s]+$/;
-              var filename = pattern.exec(stringcontent);
-              filediv.innerHTML = "<a href='" + path + "'>"
-                                  + stringcontent
-                                  + "</a>";
-              filediv.classList.add("fileused");
+          // Add to the files used div
+          var filediv = document.createElement("div");
+          var pattern = /[^\/\s]+\.[^\/\s]+$/;
+          var filename = pattern.exec(stringcontent);
+          filediv.innerHTML = "<a href='" + path + "'>"
+            + stringcontent
+            + "</a>";
+          filediv.classList.add("fileused");
 
-              filesused.appendChild(filediv);
+          filesused.appendChild(filediv);
 
-          }
+        }
       });
     }
 
@@ -213,38 +213,38 @@ function linkCodeFiles(){
 }
 
 
-function linkPlotly(){
+function linkPlotly() {
 
-  $(".js-plotly-plot").each(function(i, el){
+  $(".js-plotly-plot").each(function (i, el) {
 
     Plotly.toImage(
       this,
-      {format: 'svg', width: el.offsetWidth, height: el.offsetHeight, scale:2}
-    ).then(function(img){
-      $(el).wrap('<a href="'+img+'"></a>');
+      { format: 'svg', width: el.offsetWidth, height: el.offsetHeight, scale: 2 }
+    ).then(function (img) {
+      $(el).wrap('<a href="' + img + '"></a>');
     });
 
   });
 
 }
 
-function activateTabsets(){
+function activateTabsets() {
 
-  $(".tabset-div").each(function(tabseti, tabset){
+  $(".tabset-div").each(function (tabseti, tabset) {
 
     // Add the tabset tabs
     var tabs = $('<div></div>');
     tabs.addClass('tab-panel');
     tabs.insertBefore($(tabset));
 
-    $(tabset.children).each(function(tabi, tabcontent){
+    $(tabset.children).each(function (tabi, tabcontent) {
       var label = $(tabcontent).attr("label");
       var tab = $('<div></div>').html(label).addClass("tabset-tab");
       tab.addClass("unselectable");
       tabs.append(tab);
-      if(tabi > 0) $(tabcontent).hide();
-      else         tab.addClass("active");
-      tab.click(function(){
+      if (tabi > 0) $(tabcontent).hide();
+      else tab.addClass("active");
+      tab.click(function () {
         $(tabcontent).siblings().hide();
         $(this).siblings().removeClass("active");
         $(tabcontent).show();
@@ -256,37 +256,37 @@ function activateTabsets(){
   });
 
   // Add a keyup event listener to the window
-  $(window).keyup(function(e){
+  $(window).keyup(function (e) {
 
-  	var key = e.originalEvent.key;
-  	if(e.originalEvent.shiftKey && (key == "ArrowRight" || key == "ArrowLeft")){
+    var key = e.originalEvent.key;
+    if (e.originalEvent.shiftKey && (key == "ArrowRight" || key == "ArrowLeft")) {
 
-	  	$(".tabset-div").each(function(tabseti, tabset){
+      $(".tabset-cyclable").each(function (tabseti, tabset) {
 
-	  		// Get tab visibility
-	  		var numTabs    = $(tabset).children().length;
-	  		var visibleTab;
+        // Get tab visibility
+        var numTabs = $(tabset).children().length;
+        var visibleTab;
 
-	  		$(tabset).children().each(function(i){
-	  			if($(this).is(':visible')){
-	  				visibleTab = i;
-	  			}
-	  		});
+        $(tabset).children().each(function (i) {
+          if ($(this).is(':visible')) {
+            visibleTab = i;
+          }
+        });
 
-	  		// Decide next visible
-	  		if(key == "ArrowRight"){
-		  		if(visibleTab == numTabs - 1) return(null);
-		  		else                          var nextTab = visibleTab + 1;
-	  		} else {
-	  			if(visibleTab == 0)           return(null)
-		  		else                          var nextTab = visibleTab - 1;
-	  		}
+        // Decide next visible
+        if (key == "ArrowRight") {
+          if (visibleTab == numTabs - 1) return (null);
+          else var nextTab = visibleTab + 1;
+        } else {
+          if (visibleTab == 0) return (null)
+          else var nextTab = visibleTab - 1;
+        }
 
-	  		// Trigger click on the next tab
-	  		var tabpanel = $(tabset).prev();
-	  		tabpanel.children().eq(nextTab).trigger("click");
+        // Trigger click on the next tab
+        var tabpanel = $(tabset).prev();
+        tabpanel.children().eq(nextTab).trigger("click");
 
-	  	});
+      });
 
     }
 
@@ -297,57 +297,57 @@ function activateTabsets(){
 
 function linkTags() {
 
-    if ($(".page-tag").length > 0) {
+  if ($(".page-tag").length > 0) {
 
-        var taglinks = $("<div id='tag-links'/>");
+    var taglinks = $("<div id='tag-links'/>");
+    taglinks.hide();
+    taglinks.insertAfter("#page-tags");
+
+    var tagcancel = $("<div id='tag-cancel'/>").html("&otimes;");
+    $("#page-tags").prepend(tagcancel);
+    tagcancel.click(e => {
+      taglinks.hide();
+    });
+
+    $(".page-tag").each(function () {
+
+      $(this).click(e => {
+
         taglinks.hide();
-        taglinks.insertAfter("#page-tags");
+        var shared_tags = tags[this.innerHTML];
+        taglinks.empty();
+        shared_tags.forEach(
+          function (tag) {
+            taglinks.append(
+              $("<a/>")
+                .addClass("tag-link")
+                .attr("href", "../../../" + tag.link)
+                .html(tag.title)
+            );
+          }
+        );
+        taglinks.show();
 
-        var tagcancel = $("<div id='tag-cancel'/>").html("&otimes;");
-        $("#page-tags").prepend(tagcancel);
-        tagcancel.click(e => {
-            taglinks.hide();
-        });
+      });
+    });
 
-        $(".page-tag").each(function() {
-
-            $(this).click(e => {
-
-                taglinks.hide();
-                var shared_tags = tags[this.innerHTML];
-                taglinks.empty();
-                shared_tags.forEach(
-                    function(tag) {
-                        taglinks.append(
-                            $("<a/>")
-                            .addClass("tag-link")
-                            .attr("href", "../../../"+tag.link)
-                            .html(tag.title)
-                        );
-                    }
-                );
-                taglinks.show();
-
-            });
-        });
-
-    } else {
-        $("#page-tags").hide();
-    }
+  } else {
+    $("#page-tags").hide();
+  }
 
 }
 
 
 // Upon loading the DOM
-$( document ).ready(function() {
+$(document).ready(function () {
 
-    // Add the code toggle option
-    addCodeToggle();
+  // Add the code toggle option
+  addCodeToggle();
 
-    // Make collapsible divs
-    activateCollapsibleDivs();
+  // Make collapsible divs
+  activateCollapsibleDivs();
 
-    // Activate the tabsets feature
-    activateTabsets();
+  // Activate the tabsets feature
+  activateTabsets();
 
 });
