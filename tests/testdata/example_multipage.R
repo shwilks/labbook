@@ -1,4 +1,3 @@
-
 ##' Subtitle one
 ###' An example multipage page
 #'
@@ -14,15 +13,13 @@ message("Rendering general setup")
 #' ### Multiple pages
 
 out.pageset({
-    for (x in 1:3) {
-
-        out.page(
-            paste("page", x), {
-
-            plot(cars, col = rainbow(3)[x])
-            message(sprintf("Rendering page %s", x))
-
-        })
-
-    }
+  for (x in 1:3) {
+    out.page(
+      paste("page", x),
+      {
+        plot(cars, col = rainbow(3)[x])
+        message(sprintf("Rendering page %s", x))
+      }
+    )
+  }
 })

@@ -1,4 +1,3 @@
-
 ##' Subtitle one
 ###' A first example page
 #'
@@ -14,20 +13,16 @@ rm(list = ls())
 print(1:10)
 
 out.tabset({
-
-    for(x in 1:2){
-
-        out.tab(paste("tab", x), {
-            # gp <- ggplot2::qplot(cars$speed, cars$dist)
-            # out.plot(plotly::ggplotly(gp), 5, 4)
-            out.plot(
-                plot(cars, col = rainbow(2)[x]),
-                5, 4
-            )
-        })
-
-    }
-
+  for (x in 1:2) {
+    out.tab(paste("tab", x), {
+      # gp <- ggplot2::qplot(cars$speed, cars$dist)
+      # out.plot(plotly::ggplotly(gp), 5, 4)
+      out.plot(
+        plot(cars, col = rainbow(2)[x]),
+        5, 4
+      )
+    })
+  }
 })
 
 # plot(cars)
