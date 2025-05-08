@@ -110,6 +110,11 @@ render_same_session <- function(input_file, output_file, parent_env = parent.fra
         file.remove(rmd_path)
     }
 
+    # Keep a record of the page render time
+    output_files_path <- gsub("\\.html$", "_files", output_file)
+    if (!dir.exists(output_files_path)) dir.create(output_files_path)
+    writeLines(as.character(Sys.Date()), file.path(output_files_path, "meta.txt"))
+
     # Fetch the number of pages
     npages <- get0(".pagenum", env, ifnotfound = 1)
     pagelabels <- get0(".pagelabels", env, ifnotfound = NULL)
@@ -357,6 +362,9 @@ render.page <- function(
     )
     writeLines(tags_js, tags_path)
   }
+
+  # Update page stats
+  update_page_stats()
 
   # Write page id png
   if (!standalone) {
