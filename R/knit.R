@@ -17,8 +17,8 @@ div <- function(...) {
 #' @export
 out.plot <- function(
     code,
-    fig_width = 5,
-    fig_height = 7,
+    fig_width = NULL,
+    fig_height = NULL,
     out_height = NULL,
     out_width = NULL,
     inline = FALSE
@@ -31,6 +31,15 @@ out.plot <- function(
     checkmate::assert_number(out_width, null.ok = T)
     checkmate::assert_flag(inline)
 
+    # Set default argument values
+    if (is.null(fig_width) && is.null(out_width)) {
+        fig_width <- 5
+    }
+
+    if (is.null(fig_height) && is.null(out_height)) {
+        fig_height <- 7
+    }
+
     # Set default plot width and height in pixels
     if (!is.null(out_width) && is.null(out_height)) {
         out_height <- out_width * (fig_height / fig_width)
@@ -38,6 +47,15 @@ out.plot <- function(
 
     if (is.null(out_width) && !is.null(out_height)) {
         out_width <- out_height * (fig_width / fig_height)
+    }
+
+    # Set default plot width and height in inches
+    if (is.null(fig_width) && !is.null(out_width)) {
+        fig_width <- out_width / 72
+    }
+
+    if (is.null(fig_height) && !is.null(out_height)) {
+        fig_height <- out_height / 72
     }
 
     if (knitting()) {
@@ -86,6 +104,12 @@ out <- function(...) {
 
 out.html <- function(...) {
   out(htmltools::htmlPreserve(paste(..., collapse = "")))
+}
+
+out.tagset <- function(tag, ...) {
+    out.html(sprintf("<%s>", tag))
+    list(...)
+    out.html(sprintf("</%s>", tag))
 }
 
 #' @export
