@@ -54,16 +54,16 @@ add_pagetab_links <- function(filepath, pagelinks, pagelabels) {
 }
 
 # Render in a new r session
-render_new_session <- function(output_file, parent_env = parent.frame(), ...) {
+render_new_session <- function(input_file, output_file, parent_env = parent.frame(), ...) {
   callr::r(
-    func = function(output_file, ...) labbook:::render_same_session(output_file, ...),
-    args = c(list(output_file = output_file), list(...)),
+    func = function(input_file, output_file, ...) labbook:::render_same_session(input_file, output_file, ...),
+    args = c(list(input_file = input_file, output_file = output_file), list(...)),
     show = TRUE
   )
 }
 
 # Render in the same r session
-render_same_session <- function(output_file, parent_env = parent.frame(), ...) {
+render_same_session <- function(input_file, output_file, parent_env = parent.frame(), keep_rmd = FALSE, ...) {
   # Run a render loop through all the pages
   npages <- 1
   pagenum_rendering <- 0
@@ -88,11 +88,27 @@ render_same_session <- function(output_file, parent_env = parent.frame(), ...) {
 
     # Do the actual page render
     if (pagenum_rendering > 1) message(sprintf("Rendering '%s'", output_file_page))
-    rmarkdown::render(
-      output_file = output_file_page,
-      ...,
-      envir = env
+
+    # Copy the intermediate rmd file into place
+    rmd_path <- gsub("html$", "Rmd", output_file_page)
+    file.copy(
+        input_file,
+        rmd_path,
+        overwrite = TRUE
     )
+
+    # Do the render
+    rmarkdown::render(
+        input = rmd_path,
+        output_file = output_file_page,
+        envir = env,
+        ...
+    )
+
+    # Remove the rmd file
+    if (!keep_rmd) {
+        file.remove(rmd_path)
+    }
 
     # Fetch the number of pages
     npages <- get0(".pagenum", env, ifnotfound = 1)
@@ -204,6 +220,7 @@ render.page <- function(
     new_session = TRUE,
     markdown_path = NULL,
     keep_editor_focus = getOption("labbook.keep_focus_on_render", FALSE),
+    keep_rmd = FALSE,
     parent_env = parent.frame()) {
   # Set default codepath
   if (is.null(codepath)) {
@@ -262,6 +279,7 @@ render.page <- function(
 
   # Knit the markdown file to the page output
   if (verbose) message("Knitting output...", appendLF = FALSE)
+
   page_details <- knit_markdown(
     markdown_file  = markdown_file,
     output_file    = pagepath,
@@ -279,7 +297,8 @@ render.page <- function(
     add_index_link = add_index_link,
     cache          = cache,
     new_session    = new_session,
-    parent_env     = parent_env
+    parent_env     = parent_env,
+    keep_rmd       = keep_rmd
   )
   if (verbose) message("done.")
 
@@ -572,10 +591,9 @@ knit_markdown <- function(markdown_file,
                           eval = TRUE,
                           cache = FALSE,
                           new_session = TRUE,
-                          parent_env = parent.frame()) {
+                          parent_env = parent.frame(),
+                          keep_rmd = FALSE) {
   # Set the library and cache location
-  lib_dir <- file.path(dirname(output_file), ".lib")
-  cache_dir <- gsub("\\.html$", "_cache/", output_file)
   files_dir <- gsub("\\.html$", "_files/", output_file)
   widgets_dir <- file.path(files_dir, "widgets")
 
@@ -733,7 +751,7 @@ knit_markdown <- function(markdown_file,
         highlight = "default",
         theme = NULL,
         self_contained = standalone,
-        lib_dir = lib_dir,
+        lib_dir = ".lib",
         includes = rmarkdown::includes(
           in_header   = header_file,
           before_body = before_body_file,
@@ -778,7 +796,6 @@ knit_markdown <- function(markdown_file,
 
   if (cache) {
     output_format$knitr$opts_chunk$cache <- TRUE
-    output_format$knitr$opts_chunk$cache.path <- cache_dir
   }
 
   # Set hook for numbering subchunks
@@ -837,21 +854,23 @@ knit_markdown <- function(markdown_file,
   # Render the html page
   if (new_session) {
     render_new_session(
-      input = markdown_file,
+      input_file = markdown_file,
       output_format = output_format,
       output_file = output_file,
       quiet = TRUE,
       knit_root_dir = getwd(),
-      parent_env = parent_env
+      parent_env = parent_env,
+      keep_rmd = keep_rmd
     )
   } else {
     render_same_session(
-      input = markdown_file,
+      input_file = markdown_file,
       output_format = output_format,
       output_file = output_file,
       quiet = TRUE,
       knit_root_dir = getwd(),
-      parent_env = parent_env
+      parent_env = parent_env,
+      keep_rmd = keep_rmd
     )
   }
 
