@@ -10,7 +10,10 @@ labpage_render <- function(x, options, ...) {
     src <- x[[2]]
 
     # Append a custom html-widget-unloaded class
-    x[[1]][[2]]$attribs$class <- paste(x[[1]][[2]]$attribs$class, "html-widget-unloaded")
+    x[[1]][[2]]$attribs$class <- paste(
+      x[[1]][[2]]$attribs$class,
+      "html-widget-unloaded"
+    )
 
     # Escape characters
     widget_data <- src$children[[1]]
@@ -22,7 +25,8 @@ labpage_render <- function(x, options, ...) {
     widget_data_script <- sprintf("var %s = `%s`;", widget_id, widget_data)
 
     # Write it out to the widget directory
-    if (!dir.exists(options$widgets.dir)) dir.create(options$widgets.dir, recursive = T)
+    if (!dir.exists(options$widgets.dir))
+      dir.create(options$widgets.dir, recursive = T)
     writeLines(
       widget_data_script,
       file.path(options$widgets.dir, paste0(widget_id, ".js"))

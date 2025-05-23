@@ -14,7 +14,10 @@ index_pages <- function() {
       pageinfo <- file.info(pathpage)
       href <- paste0("projects/", project, "/pages/", page)
       page_title <- xml2::xml_text(
-        xml2::xml_find_first(index, paste0("//section[@id='projects']/div/a[@href='", href, "']"))
+        xml2::xml_find_first(
+          index,
+          paste0("//section[@id='projects']/div/a[@href='", href, "']")
+        )
       )
 
       if (is.na(page_title)) {
@@ -27,7 +30,11 @@ index_pages <- function() {
       )
 
       if (pageinfo$size > 1e7) {
-        warning(sprintf("Skipped page '%s'", page), call. = FALSE, immediate. = TRUE)
+        warning(
+          sprintf("Skipped page '%s'", page),
+          call. = FALSE,
+          immediate. = TRUE
+        )
       } else {
         page_content <- tryCatch(
           {
@@ -42,7 +49,10 @@ index_pages <- function() {
             content <- pnodestext[!excluded]
 
             # Read code
-            codenode <- xml2::xml_find_all(html, "//pre[contains(concat(' ', @class, ' '), ' page-code ')]")
+            codenode <- xml2::xml_find_all(
+              html,
+              "//pre[contains(concat(' ', @class, ' '), ' page-code ')]"
+            )
             code <- strsplit(xml2::xml_text(codenode), "\\n")[[1]]
 
             list(
@@ -51,7 +61,10 @@ index_pages <- function() {
             )
           },
           error = function(e) {
-            warning(sprintf("When indexing pages, unable to parse page '%s'", page), call. = FALSE)
+            warning(
+              sprintf("When indexing pages, unable to parse page '%s'", page),
+              call. = FALSE
+            )
 
             list(
               content = list(),
@@ -62,11 +75,11 @@ index_pages <- function() {
       }
 
       list(
-        page_path  = basename(pathpage),
+        page_path = basename(pathpage),
         page_title = page_title,
-        mtime      = as.character(as.Date(pageinfo$mtime)),
-        content    = page_content$content,
-        code       = page_content$code
+        mtime = as.character(as.Date(pageinfo$mtime)),
+        content = page_content$content,
+        code = page_content$code
       )
     })
 
@@ -74,9 +87,9 @@ index_pages <- function() {
     # pagescontent  <- pagescontent[contentlength > 0]
 
     list(
-      project_path  = basename(pathproject),
+      project_path = basename(pathproject),
       project_title = readLines(file.path(pathproject, ".title")),
-      pages         = pagescontent
+      pages = pagescontent
     )
   })
 

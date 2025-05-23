@@ -20,7 +20,8 @@ out.tabset({
     out.plot(
       plotly::ggplotly(gp1),
       # gp,
-      8, 5
+      8,
+      5
     )
   )
   out.tab(
@@ -28,7 +29,8 @@ out.tabset({
     out.plot(
       plotly::ggplotly(gp2),
       # gp,
-      8, 5
+      8,
+      5
     )
   )
 })

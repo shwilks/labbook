@@ -5,12 +5,12 @@ stringify <- function(x) {
 
 #' @export
 render.pagetemplate <- function(
-    template,
-    codepath,
-    vars,
-    as.job = TRUE,
-    ...
-    ) {
+  template,
+  codepath,
+  vars,
+  as.job = TRUE,
+  ...
+) {
   # Read the template
   templatelines <- readLines(template)
 

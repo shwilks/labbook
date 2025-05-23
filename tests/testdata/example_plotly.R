@@ -13,7 +13,8 @@ gp <- ggplot2::ggplot(cars, ggplot2::aes(speed, dist)) +
   ggplot2::geom_point()
 out.plot(
   plotly::ggplotly(gp),
-  8, 5
+  8,
+  5
 )
 
 # Do a second plot
@@ -21,7 +22,8 @@ gp <- ggplot2::ggplot(cars, ggplot2::aes(speed)) +
   ggplot2::geom_histogram(bins = 20)
 out.plot(
   plotly::ggplotly(gp),
-  5, 5
+  5,
+  5
 )
 
 # Do a third plot
@@ -29,7 +31,8 @@ gp <- ggplot2::ggplot(DNase, ggplot2::aes(conc, density, color = Run)) +
   ggplot2::geom_point()
 out.plot(
   plotly::ggplotly(gp),
-  10, 10
+  10,
+  10
 )
 
 # Do many final plots
@@ -38,7 +41,8 @@ for (x in 1:50) {
     ggplot2::geom_point(color = rainbow(50)[x])
   out.plot(
     plotly::ggplotly(gp),
-    8, 5
+    8,
+    5
   )
 }
 

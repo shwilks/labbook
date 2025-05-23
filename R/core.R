@@ -8,17 +8,19 @@
 #' @export
 #'
 labbook.init <- function(
-    labbook.dir,
-    labbook.title,
-    project.title,
-    labbook.dirname = "labbook") {
+  labbook.dir,
+  labbook.title,
+  project.title,
+  labbook.dirname = "labbook"
+) {
   # Check args
   if (missing(labbook.title)) stop("Please enter a name for the labbook")
   if (missing(project.title)) stop("Please enter a name for the first project")
 
   # Create the directory
   labbook.path <- file.path(labbook.dir, labbook.dirname)
-  if (file.exists(labbook.path)) stop("A labbook directory already exists at this location")
+  if (file.exists(labbook.path))
+    stop("A labbook directory already exists at this location")
   dir.create(labbook.path)
 
   # Copy the library folder
@@ -36,7 +38,10 @@ labbook.init <- function(
   writeLines("", file.path(labbook.path, "todo", "overall-todo.md"))
 
   # Create the index page
-  index <- xml2::read_html(system.file("labbook/index.html", package = "labbook"))
+  index <- xml2::read_html(system.file(
+    "labbook/index.html",
+    package = "labbook"
+  ))
 
   ## Rename main title
   maintitle <- xml2::xml_find_first(index, "//div[@class='main-title']")
@@ -56,7 +61,7 @@ labbook.init <- function(
   ## Create the first project
   labbook.newProject(
     project.title = project.title,
-    labbook.path  = labbook.path
+    labbook.path = labbook.path
   )
 }
 
@@ -70,9 +75,10 @@ labbook.init <- function(
 #' @export
 #'
 labbook.newProject <- function(
-    project.title,
-    project.dir = NULL,
-    labbook.path = "../../") {
+  project.title,
+  project.dir = NULL,
+  labbook.path = "../../"
+) {
   # Check args
   if (is.null(project.dir)) project.dir <- make.safename(project.title)
 
@@ -94,13 +100,13 @@ labbook.newProject <- function(
   # (this allows you to grant access to only a single project directory if you wish)
   file.symlink(
     from = file.path("..", "..", "library"),
-    to   = file.path(project_path, ".lib")
+    to = file.path(project_path, ".lib")
   )
 
   # Similarly create a symbolic link to the shared .Renviron file
   file.symlink(
     from = file.path("..", "..", "library", ".Renviron"),
-    to   = file.path(project_path, ".Renviron")
+    to = file.path(project_path, ".Renviron")
   )
 
   # Create the project
@@ -114,17 +120,17 @@ labbook.newProject <- function(
 }
 
 
-
 #' Create a new labbook page
 #'
 #' @param project.dir
 #'
 #' @export
 labbook.newPage <- function(
-    filename,
-    project.dir = NULL,
-    openfile = TRUE,
-    overwrite = FALSE) {
+  filename,
+  project.dir = NULL,
+  openfile = TRUE,
+  overwrite = FALSE
+) {
   # Check for file name
   if (missing(filename)) {
     stop("Please provide a filename")
@@ -229,8 +235,9 @@ labbook_clone_page <- function(ext = "_v2") {
 
 #' @export
 labbook_merge_subtitles <- function(
-    subtitle_from,
-    subtitle_into) {
+  subtitle_from,
+  subtitle_into
+) {
   # Set variables
   project_title <- readLines(".title")
   index_path <- "../../index.html"
@@ -259,7 +266,10 @@ labbook_merge_subtitles <- function(
   }
 
   # Move all the sibling nodes from 1 to 2
-  lapply(rev(linknodes1), \(node) xml2::xml_add_sibling(siblingnode2, node, .copy = FALSE))
+  lapply(
+    rev(linknodes1),
+    \(node) xml2::xml_add_sibling(siblingnode2, node, .copy = FALSE)
+  )
 
   # Remove the subtitle title node
   xml2::xml_remove(titlenode1)

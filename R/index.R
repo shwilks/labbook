@@ -5,15 +5,19 @@ read_index <- function(index_path) {
 
 # Write the index file
 write_index <- function(index, index_path, format = TRUE) {
-  xml2::write_html(index, index_path, options = c("format_whitespace", "format"))
+  xml2::write_html(
+    index,
+    index_path,
+    options = c("format_whitespace", "format")
+  )
 }
 
 # Format the index
 format_index <- function(index_path) {
   prettyindex <- system2(
     command = "prettier",
-    args    = c("--print-width 400", index_path),
-    stdout  = TRUE
+    args = c("--print-width 400", index_path),
+    stdout = TRUE
   )
   writeLines(prettyindex, index_path)
 }
@@ -23,7 +27,10 @@ get_index_project <- function(index, project_title) {
   xml2::xml_parent(
     xml2::xml_find_first(
       index,
-      sprintf("//section[@id='projects']/div[@class='project']/h3[text()='%s']", project_title)
+      sprintf(
+        "//section[@id='projects']/div[@class='project']/h3[text()='%s']",
+        project_title
+      )
     )
   )
 }
@@ -50,19 +57,20 @@ add_index_project <- function(index, project_title, project_dir) {
 }
 
 
-
 # Add a page link to the project section
 add_project_pagelink <- function(
-    projectnode,
-    subtitle,
-    page_title,
-    page_link,
-    subtitlepos = "bottom") {
+  projectnode,
+  subtitle,
+  page_title,
+  page_link,
+  subtitlepos = "bottom"
+) {
   # Get the subtitle node
   titlenode <- getSubtitleNode(projectnode, subtitle)
 
   # Add the subtitle node if not found
-  if (length(titlenode) == 0) titlenode <- addSubtitleNode(projectnode, subtitle, subtitlepos)
+  if (length(titlenode) == 0)
+    titlenode <- addSubtitleNode(projectnode, subtitle, subtitlepos)
 
   # Get links under the subtitle
   linknodes <- getSubtitleLinks(projectnode, subtitle)
@@ -76,7 +84,9 @@ add_project_pagelink <- function(
 
   # Set attributes
   node_attributes <- list(
-    siblingnode, "a", page_title,
+    siblingnode,
+    "a",
+    page_title,
     href = page_link,
     .where = "after"
   )
@@ -116,12 +126,14 @@ remove_project_pagelink <- function(projectnode, page_link) {
 
 
 # Get a subtitle node
-getSubtitleNode <- function(projectnode,
-                            subtitle) {
+getSubtitleNode <- function(projectnode, subtitle) {
   if (is.null(subtitle)) {
     subtitlenode <- xml2::xml_find_first(projectnode, "h3")
   } else {
-    subtitlenode <- xml2::xml_find_first(projectnode, paste0("h4[text() = '", subtitle, "']"))
+    subtitlenode <- xml2::xml_find_first(
+      projectnode,
+      paste0("h4[text() = '", subtitle, "']")
+    )
   }
   subtitlenode
 }
@@ -134,20 +146,23 @@ getSubtitleNodes <- function(projectnode) {
 
 
 # Get subtitle nodes
-getSubtitleLinks <- function(projectnode,
-                             subtitle = NULL) {
+getSubtitleLinks <- function(projectnode, subtitle = NULL) {
   if (is.null(subtitle)) {
-    xml2::xml_find_all(projectnode, paste0("a[count(preceding-sibling::h4) = 0]"))
+    xml2::xml_find_all(
+      projectnode,
+      paste0("a[count(preceding-sibling::h4) = 0]")
+    )
   } else {
-    xml2::xml_find_all(projectnode, paste0("a[preceding-sibling::h4[1][text() = '", subtitle, "']]"))
+    xml2::xml_find_all(
+      projectnode,
+      paste0("a[preceding-sibling::h4[1][text() = '", subtitle, "']]")
+    )
   }
 }
 
 
 # Make a subtitle node
-addSubtitleNode <- function(projectnode,
-                            subtitle,
-                            subtitlepos = "bottom") {
+addSubtitleNode <- function(projectnode, subtitle, subtitlepos = "bottom") {
   if (subtitlepos == "bottom") {
     xml2::xml_add_child(projectnode, "h4", subtitle)
   } else if (subtitlepos == "top") {
@@ -165,29 +180,30 @@ addSubtitleNode <- function(projectnode,
 
 # Add a link to the index page
 addIndexPageLink <- function(
-    index_path,
-    project_title,
-    page_title,
-    page_subtitle,
-    page_link,
-    overwrite = TRUE,
-    subtitlepos = "bottom") {
+  index_path,
+  project_title,
+  page_title,
+  page_subtitle,
+  page_link,
+  overwrite = TRUE,
+  subtitlepos = "bottom"
+) {
   index <- read_index(index_path)
   project <- get_index_project(index, project_title)
 
   if (overwrite) {
     remove_project_pagelink(
       projectnode = project,
-      page_link   = page_link
+      page_link = page_link
     )
   }
 
   add_project_pagelink(
-    projectnode  = project,
-    subtitle     = page_subtitle,
-    page_title   = page_title,
-    page_link    = page_link,
-    subtitlepos  = subtitlepos
+    projectnode = project,
+    subtitle = page_subtitle,
+    page_title = page_title,
+    page_link = page_link,
+    subtitlepos = subtitlepos
   )
 
   write_index(index, index_path)
@@ -195,9 +211,10 @@ addIndexPageLink <- function(
 
 # Update a project node todo div
 update_project_todo <- function(
-    projectnode,
-    todo,
-    todolink) {
+  projectnode,
+  todo,
+  todolink
+) {
   # Remove the current todo
   xml2::xml_remove(
     xml2::xml_find_first(projectnode, "div[@class='todo']")
@@ -218,16 +235,17 @@ update_project_todo <- function(
 
 # Update the index todo for a project
 updateIndexToDo <- function(
-    index_path,
-    project_title,
-    todo,
-    todolink) {
+  index_path,
+  project_title,
+  todo,
+  todolink
+) {
   index <- read_index(index_path)
   project <- get_index_project(index, project_title)
   update_project_todo(
     projectnode = project,
-    todo        = todo,
-    todolink    = todolink
+    todo = todo,
+    todolink = todolink
   )
   write_index(index, index_path)
 }

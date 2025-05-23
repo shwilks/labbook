@@ -15,10 +15,10 @@ test_that("Render a standalone page", {
   # standalone.path <- tempfile(fileext = ".html")
   standalone.path <- "~/Desktop/test.html"
   render.page(
-    codepath   = example.path,
-    pagepath   = standalone.path,
+    codepath = example.path,
+    pagepath = standalone.path,
     standalone = TRUE,
-    openpage   = FALSE
+    openpage = FALSE
   )
 
   expect_true(file.exists(standalone.path))
@@ -32,7 +32,7 @@ test_that("Initiate labbook", {
   unlink(labbook.path, recursive = TRUE)
 
   labbook.init(
-    labbook.dir   = labbook.dir,
+    labbook.dir = labbook.dir,
     labbook.title = "Test labbook",
     project.title = "First project"
   )
@@ -46,13 +46,15 @@ test_that("Initiate labbook", {
 test_that("Add a new project", {
   labbook.newProject(
     project.title = "A second project",
-    labbook.path  = labbook.path
+    labbook.path = labbook.path
   )
 
   expect_true(
     file.exists(
       file.path(
-        labbook.path, "projects", labbook:::make.safename("A second project")
+        labbook.path,
+        "projects",
+        labbook:::make.safename("A second project")
       )
     )
   )
@@ -69,7 +71,9 @@ test_that("Add another project", {
   expect_true(
     file.exists(
       file.path(
-        labbook.path, "projects", labbook:::make.safename("A third project")
+        labbook.path,
+        "projects",
+        labbook:::make.safename("A third project")
       )
     )
   )
@@ -79,11 +83,17 @@ test_that("Add another project", {
 # Render a new page
 test_that("Render a new page", {
   example.path <- testthat::test_path(file.path("..", "testdata", "example.R"))
-  codefile.path <- file.path(labbook.path, "projects", "first_project", "code", "example.R")
+  codefile.path <- file.path(
+    labbook.path,
+    "projects",
+    "first_project",
+    "code",
+    "example.R"
+  )
 
   file.copy(
     from = example.path,
-    to   = codefile.path
+    to = codefile.path
   )
 
   render.page(codefile.path, openpage = FALSE)
@@ -96,11 +106,17 @@ test_that("Render a new page", {
 # Render a new page
 test_that("Render a second page", {
   example.path <- testthat::test_path(file.path("..", "testdata", "example2.R"))
-  codefile.path <- file.path(labbook.path, "projects", "a_second_project", "code", "example2.R")
+  codefile.path <- file.path(
+    labbook.path,
+    "projects",
+    "a_second_project",
+    "code",
+    "example2.R"
+  )
 
   file.copy(
     from = example.path,
-    to   = codefile.path
+    to = codefile.path
   )
 
   render.page(codefile.path, openpage = FALSE)
@@ -112,12 +128,24 @@ test_that("Render a second page", {
 # Render a new page
 test_that("Render a third page", {
   example.path <- testthat::test_path(file.path("..", "testdata", "example3.R"))
-  codefile.path <- file.path(labbook.path, "projects", "first_project", "code", "example3.R")
-  pagefile.path <- file.path(labbook.path, "projects", "first_project", "pages", "example3.html")
+  codefile.path <- file.path(
+    labbook.path,
+    "projects",
+    "first_project",
+    "code",
+    "example3.R"
+  )
+  pagefile.path <- file.path(
+    labbook.path,
+    "projects",
+    "first_project",
+    "pages",
+    "example3.html"
+  )
 
   file.copy(
     from = example.path,
-    to   = codefile.path
+    to = codefile.path
   )
 
   expect_error(
@@ -132,11 +160,17 @@ test_that("Render a third page", {
 # Render a new page
 test_that("Render a fourth page", {
   example.path <- testthat::test_path(file.path("..", "testdata", "example4.R"))
-  codefile.path <- file.path(labbook.path, "projects", "first_project", "code", "example4.R")
+  codefile.path <- file.path(
+    labbook.path,
+    "projects",
+    "first_project",
+    "code",
+    "example4.R"
+  )
 
   file.copy(
     from = example.path,
-    to   = codefile.path
+    to = codefile.path
   )
 
   render.page(codefile.path, openpage = FALSE)
@@ -148,11 +182,17 @@ test_that("Render a fourth page", {
 # Render the example page
 test_that("Render the example page", {
   example.path <- system.file("examples/example_page.R", package = "labbook")
-  codefile.path <- file.path(labbook.path, "projects", "first_project", "code", "main_example_page.R")
+  codefile.path <- file.path(
+    labbook.path,
+    "projects",
+    "first_project",
+    "code",
+    "main_example_page.R"
+  )
 
   file.copy(
     from = example.path,
-    to   = codefile.path
+    to = codefile.path
   )
 
   render.page(codefile.path, openpage = FALSE)
@@ -162,4 +202,7 @@ test_that("Render the example page", {
 
 
 # Cleanup
-unlink(testthat::test_path(file.path("..", "testoutput", "labbook")), recursive = TRUE)
+unlink(
+  testthat::test_path(file.path("..", "testoutput", "labbook")),
+  recursive = TRUE
+)

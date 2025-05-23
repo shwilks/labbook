@@ -24,7 +24,7 @@ project.info <- function(path = NULL) {
   if (is.null(path)) path <- rstudioapi::getActiveProject()
   list(
     directory = basename(normalizePath(path)),
-    title     = readLines(file.path(path, ".title"))
+    title = readLines(file.path(path, ".title"))
   )
 }
 
@@ -50,8 +50,9 @@ intermediate.dirs <- function(dir, parent) {
 
 # Function for viewing webpage associated with current code document
 open_webpage <- function(
-    html_path,
-    keep_editor_focus = getOption("labbook.keep_focus_on_render", FALSE)) {
+  html_path,
+  keep_editor_focus = getOption("labbook.keep_focus_on_render", FALSE)
+) {
   if (missing(html_path)) {
     doc_info <- rstudioapi::getActiveDocumentContext()
     code_path <- doc_info$path

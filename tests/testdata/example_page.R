@@ -19,7 +19,8 @@ out.tabset({
       # out.plot(plotly::ggplotly(gp), 5, 4)
       out.plot(
         plot(cars, col = rainbow(2)[x]),
-        5, 4
+        5,
+        4
       )
     })
   }

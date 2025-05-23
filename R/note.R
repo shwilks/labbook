@@ -1,15 +1,16 @@
 #' Render a new note
 #' @export
 render.note <- function(
-    notepath = NULL,
-    pagepath = NULL,
-    pagelink = NULL,
-    project.path = NULL,
-    add_index_link = TRUE,
-    notetitle = NULL,
-    openpage = FALSE,
-    headcontent = NULL,
-    headercontent = NULL) {
+  notepath = NULL,
+  pagepath = NULL,
+  pagelink = NULL,
+  project.path = NULL,
+  add_index_link = TRUE,
+  notetitle = NULL,
+  openpage = FALSE,
+  headcontent = NULL,
+  headercontent = NULL
+) {
   # Set default codepath
   if (is.null(notepath)) {
     notepath <- rstudioapi::getActiveDocumentContext()$path
@@ -38,30 +39,33 @@ render.note <- function(
   # Preprocess note
   notemd <- tempfile(fileext = "Rmd")
   note <- preprocess_notefile(
-    notefile   = notepath,
+    notefile = notepath,
     outputfile = notemd,
-    notetitle  = notetitle
+    notetitle = notetitle
   )
 
   # Set header content
   if (is.null(headercontent)) {
     interdirs <- intermediate.dirs(
-      dir    = notepath,
+      dir = notepath,
       parent = file.path(project.path, "notes")
     )
-    headercontent <- sprintf("<a class='headerlink' href='%s'>Open note</a>", file.path("..", file.path("notes", interdirs)))
+    headercontent <- sprintf(
+      "<a class='headerlink' href='%s'>Open note</a>",
+      file.path("..", file.path("notes", interdirs))
+    )
   }
 
   # Knit the page
   knit_markdown(
     markdown_file = notemd,
-    output_file   = pagepath,
-    project_path  = project.path,
-    index_path    = index_path,
-    page_title    = note$title,
-    eval          = FALSE,
-    codetoggle    = FALSE,
-    headcontent   = headcontent,
+    output_file = pagepath,
+    project_path = project.path,
+    index_path = index_path,
+    page_title = note$title,
+    eval = FALSE,
+    codetoggle = FALSE,
+    headcontent = headcontent,
     headercontent = headercontent
   )
 
@@ -74,7 +78,7 @@ render.note <- function(
   if (add_index_link) {
     # Get any intermediate directories
     interdirs <- intermediate.dirs(
-      dir    = notepath,
+      dir = notepath,
       parent = file.path(project.path, "notes")
     )
     interdirs <- paste(
@@ -83,13 +87,18 @@ render.note <- function(
     )
 
     addIndexPageLink(
-      index_path    = index_path,
+      index_path = index_path,
       project_title = readLines(file.path(project.path, ".title")),
-      page_title    = paste(c(interdirs, note$title), collapse = " / "),
+      page_title = paste(c(interdirs, note$title), collapse = " / "),
       page_subtitle = "Notes",
-      page_link     = file.path("projects", basename(normalizePath(project.path)), "pages", basename(pagepath)),
-      overwrite     = TRUE,
-      subtitlepos   = "top"
+      page_link = file.path(
+        "projects",
+        basename(normalizePath(project.path)),
+        "pages",
+        basename(pagepath)
+      ),
+      overwrite = TRUE,
+      subtitlepos = "top"
     )
   }
 }
@@ -97,9 +106,10 @@ render.note <- function(
 
 # Preprocessing a note file for rendering
 preprocess_notefile <- function(
-    notefile,
-    outputfile,
-    notetitle = NULL) {
+  notefile,
+  outputfile,
+  notetitle = NULL
+) {
   # Read the note file
   notetext <- readLines(notefile)
 
