@@ -8,14 +8,15 @@ Description: A package of functions for maintaining a digital lab book with RStu
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Imports: 
     knitr,
     rmarkdown,
     Hmisc,
     shiny,
     htmldeps,
-    checkmate
+    checkmate,
+    usethis
 Suggests: 
     testthat (>= 2.1.0)
 Remotes:
