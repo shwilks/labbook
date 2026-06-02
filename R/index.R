@@ -35,6 +35,20 @@ get_index_project <- function(index, project_title) {
   )
 }
 
+# Get all projects
+getProjectNodes <- function(index) {
+  xml2::xml_find_all(
+    index,
+    "//section[@id='projects']/div[@class='project']"
+  )
+}
+
+getProjectNodeTitle <- function(projectnode) {
+  xml2::xml_text(
+    xml2::xml_find_first(projectnode, "h3")
+  )
+}
+
 # Get the project section
 get_index_project_section <- function(index) {
   xml2::xml_find_first(index, "//section[@id='projects']")
@@ -69,8 +83,9 @@ add_project_pagelink <- function(
   titlenode <- getSubtitleNode(projectnode, subtitle)
 
   # Add the subtitle node if not found
-  if (length(titlenode) == 0)
+  if (length(titlenode) == 0) {
     titlenode <- addSubtitleNode(projectnode, subtitle, subtitlepos)
+  }
 
   # Get links under the subtitle
   linknodes <- getSubtitleLinks(projectnode, subtitle)
@@ -93,7 +108,9 @@ add_project_pagelink <- function(
 
   # Add the node
   newnode <- do.call(xml2::xml_add_sibling, node_attributes)
-  if (class(newnode) == "list") newnode <- newnode[[1]]
+  if (class(newnode) == "list") {
+    newnode <- newnode[[1]]
+  }
 
   # Check for other versions of the page
   for (linknode in linknodes) {
@@ -116,12 +133,55 @@ add_project_pagelink <- function(
   }
 }
 
+add_project_codelink <- function(
+  projectnode,
+  subtitle,
+  page_title,
+  page_link,
+  subtitlepos = "bottom"
+) {
+  # Get the subtitle node
+  titlenode <- getSubtitleNode(projectnode, subtitle)
+
+  # Add the subtitle node if not found
+  if (length(titlenode) == 0) {
+    titlenode <- addSubtitleNode(projectnode, subtitle, subtitlepos)
+  }
+
+  # Get links under the subtitle
+  linknodes <- getSubtitleLinks(projectnode, subtitle)
+
+  # Work out sibling node
+  if (length(linknodes) == 0) {
+    siblingnode <- titlenode
+  } else {
+    siblingnode <- linknodes[length(linknodes)]
+  }
+
+  # Set attributes
+  node_attributes <- list(
+    siblingnode,
+    "a",
+    page_title,
+    href = page_link,
+    class = "code-link",
+    .where = "after"
+  )
+
+  # Add the node
+  do.call(xml2::xml_add_sibling, node_attributes)
+}
+
 
 # Remove a project page link
 remove_project_pagelink <- function(projectnode, page_link) {
   xml2::xml_remove(
     xml2::xml_find_all(projectnode, sprintf("a[@href='%s']", page_link))
   )
+}
+
+getPageLinkNodes <- function(projectnode, page_link) {
+  xml2::xml_find_all(projectnode, "a")
 }
 
 
