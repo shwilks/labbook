@@ -32,11 +32,19 @@ out.plot <- function(
 
   # Set default argument values
   if (is.null(fig_width) && is.null(out_width)) {
-    fig_width <- 5
+    if (is.null(attr(code, "ggdim.total_width"))) {
+      fig_width <- 5
+    } else {
+      fig_width <- attr(code, "ggdim.total_width")
+    }
   }
 
   if (is.null(fig_height) && is.null(out_height)) {
-    fig_height <- 7
+    if (is.null(attr(code, "ggdim.total_height"))) {
+      fig_height <- 7
+    } else {
+      fig_height <- attr(code, "ggdim.total_height")
+    }
   }
 
   # Set default plot width and height in pixels
@@ -64,8 +72,12 @@ out.plot <- function(
       "}"
     )
 
-    if (is.null(out_height)) out_height <- "NULL"
-    if (is.null(out_width)) out_width <- "NULL"
+    if (is.null(out_height)) {
+      out_height <- "NULL"
+    }
+    if (is.null(out_width)) {
+      out_width <- "NULL"
+    }
 
     sub_chunk <- paste0(
       "```{r ",
@@ -88,7 +100,11 @@ out.plot <- function(
             "
     )
 
-    out.html("<div class='plot-div'>")
+    if (inline) {
+      out.html("<div class='plot-div plot-div-inline'>")
+    } else {
+      out.html("<div class='plot-div'>")
+    }
     out(knitr::knit(text = knitr::knit_expand(text = sub_chunk)))
     out.html("</div>")
   } else {
@@ -119,7 +135,9 @@ out.tagset <- function(tag, ...) {
 
 #' @export
 out.table <- function(x, scale = 1, escape = TRUE, ...) {
-  if (is.null(dim(x))) x <- cbind(x) # Convert vectors to a column
+  if (is.null(dim(x))) {
+    x <- cbind(x)
+  } # Convert vectors to a column
   if (knitting()) {
     if (escape) {
       x[] <- apply(
@@ -154,7 +172,9 @@ out.collapsible <- function(label, x) {
 
 #' @export
 out.tabset <- function(..., cyclable = NULL, id = NULL) {
-  if (is.null(cyclable)) cyclable <- is.null(id)
+  if (is.null(cyclable)) {
+    cyclable <- is.null(id)
+  }
 
   cyclable_class <- ifelse(
     cyclable,
@@ -327,7 +347,9 @@ out.h4 <- function(txt) {
 
 #' @export
 out.link <- function(path) {
-  if (!file.exists(path)) stop(sprintf("File '%s' not found.", path))
+  if (!file.exists(path)) {
+    stop(sprintf("File '%s' not found.", path))
+  }
   file.path("..", path)
 }
 
