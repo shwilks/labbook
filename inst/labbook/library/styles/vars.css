@@ -1,0 +1,173 @@
+:root {
+  /* ---------------------------------------------------------- */
+  /* primary blue theme palette (hues of blue used throughout)  */
+  /* ---------------------------------------------------------- */
+  --theme-hue: 200; /* primary theme hue used across blue elements */
+  --color-link: hsl(var(--theme-hue),60%,40%);
+  --text-primary: hsl(var(--theme-hue),100%,50%);
+  --color-brand: hsl(var(--theme-hue), 48%, 24%);
+  --color-on-brand: hsl(0,0%,99%);
+
+  /* buttons and links */
+  --color-button-link: hsl(var(--theme-hue),50%,70%);
+  --color-button-note: hsl(var(--theme-hue),70%,80%);
+  --color-button-link-hover: cyan;
+
+  /* code header / download link */
+  --code-header-text: hsl(var(--theme-hue), 30%, 60%);
+  --code-header-border: hsl(var(--theme-hue), 30%, 70%);
+  --code-header-bg: hsl(var(--theme-hue), 50%, 90%);
+  --code-header-bg-light: hsl(var(--theme-hue), 50%, 98%);
+  --code-header-hover-text: hsl(var(--theme-hue), 30%, 40%);
+  --code-header-hover-border: hsl(var(--theme-hue), 30%, 50%);
+
+  /* page header */
+  --page-header-bg: hsl(var(--theme-hue),35%,25%);
+  --page-header-border: hsl(var(--theme-hue),34%,22%);
+  --page-header-link: hsl(var(--theme-hue),50%,80%);
+  --page-header-link-hover: hsl(var(--theme-hue),80%,95%);
+  --page-link-online-link: hsl(var(--theme-hue), 50%, 80%);
+
+  /* plot info */
+  --plotinfo-text: hsl(var(--theme-hue),100%,70%);
+  --plotinfo-border: hsl(var(--theme-hue),100%,95%);
+
+  /* inline linked strings */
+  --linked-string: hsl(240,100%,65%);
+  --linked-string-hover: hsl(204,100%,50%);
+
+  /* project listing decorations */
+  --color-project-border: hsl(var(--theme-hue),60%,92%);
+  --color-project-bg: hsl(var(--theme-hue),60%,97%);
+  --color-project-border-alt: hsl(0,0%,92%);
+  --color-project-bg-alt: hsl(0,0%,97%);
+
+  /* index search related colours */
+  --color-search-bg: hsl(var(--theme-hue), 60%, 90%);
+  --color-search-border: hsl(var(--theme-hue), 20%, 70%);
+  --color-search-focus-border: hsl(var(--theme-hue), 35%, 40%);
+  --color-search-none-bg: #ffcce0;
+  --color-search-none-text: #8a425f;
+
+  /* accent colour */
+  --color-accent: hsl(330,100%,40%);
+
+  /* ---------------------------------------------------------- */
+  /* other component‑specific / utility variables               */
+  /* ---------------------------------------------------------- */
+
+  /* link hover (pink) */
+  --color-link-hover: hsl(330,100%,40%);
+
+  /* code/background elements */
+  --color-code-bg: #f8f8f8;
+
+  /* blockquote styles */
+  --color-blockquote-text: #6a737d;
+  --color-blockquote-border: #dfe2e5;
+  --color-blockquote-nested-1: #0099cc;
+  --color-blockquote-nested-2: #33cc33;
+
+  /* table row background */
+  --color-table-row-bg: #f6f8fa;
+
+  /* note/idea/todo/result panels */
+  --color-note-text: #8a6d3b;
+  --color-note-bg: #fcf8e3;
+  --color-note-border: #faebcc;
+  --color-idea-text: #31708f;
+  --color-idea-bg: #d9edf7;
+  --color-idea-border: #bce8f1;
+  --color-todo-text: #743991;
+  --color-todo-bg: #f7e6ff;
+  --color-todo-border: #efccff;
+  --color-result-text: #3c763d;
+  --color-result-bg: hsl(103, 44%, 95%);
+  --color-result-border: #d6e9c6;
+
+  /* legend styling */
+  --color-legend-border: #f3f3f3;
+  --color-legend-text: #333333;
+
+  /* generic utility text colours */
+  --text-danger: #ff0000;
+  --text-success: #009933;
+  --text-warning: #ff9900;
+  --text-info: #009999;
+
+  /* muted/alternate brand colours */
+  --color-muted: #ccc;
+  --color-link-hover-light: #ffffff;
+
+  /* version badge colours */
+  --color-version-green: #10ba1c;
+  --color-version-hover: #e50453;
+
+  /* todo badge */
+  --color-todo-border: #000000;
+  --color-todo-hover: green;
+
+  /* highlight/hl_section styles */
+  --color-highlight-bg: hsl(120,61%,90%);
+  --color-highlight-border: hsl(120,61%,80%);
+
+  /* overall-todo badge colours */
+  --color-overall-todo-today-bg: #adebad;
+  --color-overall-todo-today-border: #2eb82e;
+  --color-overall-todo-today-hover-bg: #33cc33;
+
+  /* page search results styling */
+  --color-page-search-bg: hsl(358.13,40%,90%);
+  --color-page-search-border: hsl(358.13,50%,80%);
+  --color-page-search-focus-border: hsl(358.13,60%,51%);
+  --color-page-search-focus-bg: hsl(358.13,50%,85%);
+  --color-page-search-placeholder: #555;
+  --color-page-results-bg: #414141;
+  --color-page-result-link-hover: hsl(358.13,70%,42.07%);
+  --color-page-result-title-bg: rgb(205,205,205);
+  --color-page-result-content-bg: #eee;
+  --color-page-result-shadow: #00000033;
+  --color-page-search-results-border: hsl(358.13,15.27%,42.07%);
+  --color-text: #000000;
+  --color-page-results-found-text: #ffffff;
+
+  /* tag/to‑do list colours (hue 120) */
+  --tag-bg: hsl(120, 40%, 90%);
+  --tag-border: hsl(120, 40%, 70%);
+  --tag-text: hsl(120, 40%, 30%);
+  --page-tag-text: hsl(120, 80%, 40%);
+  --page-tag-hover-text: hsl(120, 80%, 20%);
+
+  /* file‑used box colours (hue 169) */
+  --fileused-border: hsl(169, 40%, 80%);
+  --fileused-bg: hsl(169, 40%, 95%);
+  --fileused-text: hsl(169, 40%, 80%);
+  --fileused-bg-hover: hsl(169, 40%, 90%);
+  --fileused-link: hsl(169, 40%, 40%);
+  --fileused-link-hover: hsl(169, 40%, 20%);
+
+  /* page header colours */
+  /* (already included in theme group above) */
+
+  /* link status colours */
+  --outdated-link: #ffcce0;
+
+  /* alert panel colours */
+  --alert-info-text: #0c5460;
+  --alert-info-bg: #d1ecf1;
+  --alert-info-border: #bee5eb;
+  --alert-warning-text: #856404;
+  --alert-warning-bg: #fff3cd;
+  --alert-warning-border: #ffeeba;
+  --alert-danger-text: #721c24;
+  --alert-danger-bg: #f8d7da;
+  --alert-danger-border: #f5c6cb;
+
+  /* generic code border colour */
+  --code-border: #e3e3e3;
+
+  /* todo page colours */
+  --todo-today-text: #004d00;
+  --todo-today-border: #33cc33;
+  --todo-today-bg: #99ff99;
+}

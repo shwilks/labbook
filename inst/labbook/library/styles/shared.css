@@ -2,22 +2,22 @@
 
 /* Page header */
 #page-header {
-  background-color: rgb(63, 82, 131);
+  background-color: var(--page-header-bg);
   color: white;
   padding: 12px;
   padding-bottom: 8px;
   font-size: 90%;
   position: relative;
-  border-bottom: solid 4px rgb(54, 69, 111);
+  border-bottom: solid 4px var(--page-header-border);
 }
 
 #page-header a {
   display: inline;
-  color: lightblue;
+  color: var(--page-header-link);
 }
 
 #page-header a:hover {
-  color: cyan;
+  color: var(--page-header-link-hover);
   text-decoration: none;
 }
 

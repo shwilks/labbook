@@ -18,6 +18,12 @@ p {
   margin: 0;
   padding: 0;
   max-width: none;
+  line-height: 0;
+}
+
+.plot-div-inline {
+  display: inline-block;
+  vertical-align: top;
 }
 
 .text-section {
@@ -37,22 +43,22 @@ p {
 
 #tag-links {
   padding: 12px;
-  background-color: hsl(120, 40%, 90%);
+  background-color: var(--tag-bg);
   font-size: 90%;
 }
 
 .tag-link {
   display: block;
-  border-left: solid 4px hsl(120, 40%, 70%);
+  border-left: solid 4px var(--tag-border);
   padding-left: 10px;
-  color: hsl(120, 40%, 30%);
+  color: var(--tag-text);
   margin-bottom: 4px;
 }
 
 .page-tag, #tag-cancel {
   display: inline-block;
   margin-right: 10px;
-  color: hsl(120, 80%, 40%);
+  color: var(--page-tag-text);
   font-size: 80%;
   cursor: pointer;
 }
@@ -65,7 +71,7 @@ p {
 }
 
 .page-tag:hover {
-  color: hsl(120, 80%, 20%);
+  color: var(--page-tag-hover-text);
 }
 
 .page-tag:before {
@@ -89,42 +95,42 @@ p {
   z-index: 100;
   font-size: 70%;
   font-weight: bold;
-  color: hsl(210, 30%, 60%);
-  border-left: solid 20px hsl(210, 30%, 70%);
+  color: var(--code-header-text);
+  border-left: solid 20px var(--code-header-border);
   cursor: pointer;
   padding-left: 8px;
   padding-right: 8px;
-  background-color: hsl(210, 50%, 90%);
-  background-image: linear-gradient(to right, hsl(210, 50%, 90%) , hsl(210, 50%, 98%));
+  background-color: var(--code-header-bg);
+  background-image: linear-gradient(to right, var(--code-header-bg) , var(--code-header-bg-light));
   box-sizing: border-box;
 }
 
 .headerlink:hover {
-  color: hsl(210, 30%, 40%);
-  border-left: solid 20px hsl(210, 30%, 50%);
+  color: var(--code-header-hover-text);
+  border-left: solid 20px var(--code-header-hover-border);
 }
 
 /* Code download link */
 #code-download-link {
   font-size: 70%;
   font-weight: bold;
-  color: hsl(210, 30%, 60%);
+  color: var(--code-header-text);
   position: relative;
   display: block;
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 8px;
   padding-right: 8px;
-  border-left: solid 20px hsl(210, 30%, 70%);
-  background-color: hsl(210, 50%, 90%);
-  background-image: linear-gradient(to right, hsl(210, 50%, 90%) , hsl(210, 50%, 98%));
+  border-left: solid 20px var(--code-header-border);
+  background-color: var(--code-header-bg);
+  background-image: linear-gradient(to right, var(--code-header-bg) , var(--code-header-bg-light));
   width: 100vw;
   box-sizing: border-box;
 }
 
 #code-download-link:hover {
-  color: hsl(210, 30%, 40%);
-  border-left: solid 20px hsl(210, 30%, 50%);
+  color: var(--code-header-hover-text);
+  border-left: solid 20px var(--code-header-hover-border);
 }
 
 #code-download-link:after {
@@ -134,21 +140,21 @@ p {
 }
 
 .fileused {
-  border-left: solid 10px hsl(169, 40%, 80%);
-  background-color: hsl(169, 40%, 95%);
+  border-left: solid 10px var(--fileused-border);
+  background-color: var(--fileused-bg);
   width: 100vw;
   box-sizing: border-box;
-  color: hsl(169, 40%, 80%);
+  color: var(--fileused-text);
   font-size: 80%;
   cursor: pointer;
 }
 
 .fileused:hover {
-  background-color: hsl(169, 40%, 90%);
+  background-color: var(--fileused-bg-hover);
 }
 
 .fileused a {
-  color: hsl(169, 40%, 40%);
+  color: var(--fileused-link);
   width: 100%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -159,16 +165,16 @@ p {
 }
 
 .fileused a:hover {
-  color: hsl(169, 40%, 20%);
+  color: var(--fileused-link-hover);
 }
 
 /* If a string is linked to a file */
 code .linked-string {
-  color: #4d4dff;
+  color: var(--linked-string);
 }
 
 code .linked-string:hover {
-  color: #0099ff;
+  color: var(--linked-string-hover);
   text-decoration: underline;
 }
 
@@ -178,16 +184,16 @@ code .linked-string:hover {
 }
 
 #page-header #page-link.outdated-link {
-  color: #ffcce0;
+  color: var(--outdated-link);
   cursor: default;
 }
 
 #page-header #page-link.online-link {
-  color: lightblue;
+  color: var(--page-link-online-link);
 }
 
 #page-header #page-link.online-link:hover {
-  color: cyan;
+  color: var(--page-header-link-hover);
 }
 
 /* Code block */
@@ -225,45 +231,45 @@ code .linked-string:hover {
 }
 
 .source-code {
-  border-color: #e3e3e3;
+  border-color: var(--code-border);
 }
 
 .output-code {
-  color: #0c5460;
-  background-color: #d1ecf1;
-  border-color: #bee5eb;
+  color: var(--alert-info-text);
+  background-color: var(--alert-info-bg);
+  border-color: var(--alert-info-border);
 }
 
 .output-code .hljs {
-  color: #0c5460;
-  background-color: #d1ecf1;
+  color: var(--alert-info-text);
+  background-color: var(--alert-info-bg);
 }
 
 .message-code {
-  color: #856404;
-  background-color: #fff3cd;
-  border-color: #ffeeba;
+  color: var(--alert-warning-text);
+  background-color: var(--alert-warning-bg);
+  border-color: var(--alert-warning-border);
 }
 
 .message-code .hljs {
-  color: #856404;
-  background-color: #fff3cd;
+  color: var(--alert-warning-text);
+  background-color: var(--alert-warning-bg);
 }
 
 .warning-code {
-  color: #721c24;
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
+  color: var(--alert-danger-text);
+  background-color: var(--alert-danger-bg);
+  border-color: var(--alert-danger-border);
 }
 
 .warning-code .hljs {
-  color: #721c24;
-  background-color: #f8d7da;
+  color: var(--alert-danger-text);
+  background-color: var(--alert-danger-bg);
 }
 
 /* Page code */
 .page-code {
-  border-color: #e3e3e3;
+  border-color: var(--code-border);
   padding-left: 12px;
   padding-top: 12px;
   padding-bottom: 12px;
@@ -560,8 +566,8 @@ code .st a:hover {
 
 .plotinfo {
   font-size: 10px;
-  color: #6699ff;
-  border-bottom: solid 1px #e6eeff;
+  color: var(--plotinfo-text);
+  border-bottom: solid 1px var(--plotinfo-border);
   padding-bottom: 4px;
   padding-right: 40px;
   width: fit-content;
@@ -572,7 +578,7 @@ code .st a:hover {
   font-weight: bolder;
   width: 12px;
   height: 12px;
-  border: solid 1.5px #6699ff;
+  border: solid 1.5px var(--plotinfo-text);
   padding: 2px;
   box-sizing: border-box;
   font-size: 7px;

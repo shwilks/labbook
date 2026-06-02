@@ -4,9 +4,9 @@
 }
 
 #today {
-    color: #004d00;
-    border-left: solid 20px #33cc33;
-    background-color: #99ff99;
+    color: var(--todo-today-text);
+    border-left: solid 20px var(--todo-today-border);
+    background-color: var(--todo-today-bg);
     padding: 18px;
 }
 
@@ -27,7 +27,7 @@ li:before {
     content: "";
     width: 18px;
     height: 18px;
-    border: solid 2px #004d00;
+    border: solid 2px var(--todo-today-text);
     border-radius: 4px;
     box-sizing: border-box;
     position: relative;
