@@ -72,8 +72,9 @@ render_new_session <- function(
   ...
 ) {
   callr::r(
-    func = function(input_file, output_file, ...)
-      labbook:::render_same_session(input_file, output_file, ...),
+    func = function(input_file, output_file, ...) {
+      labbook:::render_same_session(input_file, output_file, ...)
+    },
     args = c(
       list(input_file = input_file, output_file = output_file),
       list(...)
@@ -113,8 +114,9 @@ render_same_session <- function(
     }
 
     # Do the actual page render
-    if (pagenum_rendering > 1)
+    if (pagenum_rendering > 1) {
       message(sprintf("Rendering '%s'", output_file_page))
+    }
 
     # Copy the intermediate rmd file into place
     rmd_path <- gsub("html$", "Rmd", output_file_page)
@@ -139,7 +141,9 @@ render_same_session <- function(
 
     # Keep a record of the page render time
     output_files_path <- gsub("\\.html$", "_files", output_file)
-    if (!dir.exists(output_files_path)) dir.create(output_files_path)
+    if (!dir.exists(output_files_path)) {
+      dir.create(output_files_path)
+    }
     writeLines(
       as.character(Sys.Date()),
       file.path(output_files_path, "meta.txt")
@@ -212,7 +216,9 @@ render.page.job <- function(
   code <- readLines(codepath)
   pgtitle <- code[grep("^###'", code)]
   pgtitle <- trimws(substr(pgtitle, 5, nchar(pgtitle)))
-  if (length(pgtitle) == 0) stop("No page title found")
+  if (length(pgtitle) == 0) {
+    stop("No page title found")
+  }
 
   # Setup temporary script file
   tmp <- tempfile(fileext = ".R")
@@ -287,11 +293,14 @@ render.page <- function(
   library_path <- file.path(codedir, "..", "..", "..", "library")
   template_path <- file.path(library_path, "templates")
   tags_path <- file.path(library_path, "tags.js")
-  if (is.null(index_path))
+  if (is.null(index_path)) {
     index_path <- file.path(codedir, "..", "..", "..", "index.html")
+  }
 
   # Message that knitting is in progress
-  if (verbose) message("Start rendering")
+  if (verbose) {
+    message("Start rendering")
+  }
 
   # Remove any current files
   pagefiledir <- paste0(substr(pagepath, 1, nchar(pagepath) - 5), "_files")
@@ -299,7 +308,9 @@ render.page <- function(
 
   # Preprocess the markdown file
   markdown_file <- tempfile(fileext = ".Rmd")
-  if (verbose) message("Preprocessing code file...", appendLF = FALSE)
+  if (verbose) {
+    message("Preprocessing code file...", appendLF = FALSE)
+  }
   page <- preprocess_codefile(
     code_file = codepath,
     markdown_output = markdown_file,
@@ -307,7 +318,9 @@ render.page <- function(
     pagetitle = pagetitle,
     pagesubtitle = pagesubtitle
   )
-  if (verbose) message("done.")
+  if (verbose) {
+    message("done.")
+  }
 
   # Copy the markdown file if specified
   if (!is.null(markdown_path)) {
@@ -324,7 +337,9 @@ render.page <- function(
   }
 
   # Knit the markdown file to the page output
-  if (verbose) message("Knitting output...", appendLF = FALSE)
+  if (verbose) {
+    message("Knitting output...", appendLF = FALSE)
+  }
 
   page_details <- knit_markdown(
     markdown_file = markdown_file,
@@ -346,11 +361,15 @@ render.page <- function(
     parent_env = parent_env,
     keep_rmd = keep_rmd
   )
-  if (verbose) message("done.")
+  if (verbose) {
+    message("done.")
+  }
 
   # Try and open the page
   if (openpage) {
-    if (verbose) message("Opening webpage...", appendLF = FALSE)
+    if (verbose) {
+      message("Opening webpage...", appendLF = FALSE)
+    }
     open_webpage(pagepath, keep_editor_focus = keep_editor_focus)
     if (verbose) message("done.")
   }
@@ -367,7 +386,9 @@ render.page <- function(
 
   # Update the index page
   if (add_index_link && !standalone) {
-    if (verbose) message("Updating index page...", appendLF = FALSE)
+    if (verbose) {
+      message("Updating index page...", appendLF = FALSE)
+    }
     addIndexPageLink(
       index_path = index_path,
       project_title = readLines(file.path(projectdir, ".title")),
@@ -381,7 +402,9 @@ render.page <- function(
 
   # Update the tags record
   if (add_index_link && !standalone && length(page$tags) > 0) {
-    if (!file.exists(tags_path)) writeLines("var tags = {};", tags_path)
+    if (!file.exists(tags_path)) {
+      writeLines("var tags = {};", tags_path)
+    }
     tags_js <- readLines(tags_path)
     tags_record_js <- gsub("var tags = ", "", tags_js[1], fixed = T)
     tags_record_js <- gsub(";", "", tags_record_js, fixed = T)
@@ -434,7 +457,7 @@ render.page <- function(
 preprocess_codefile <- function(
   code_file,
   include_code_link = TRUE,
-  markdown_output,
+  markdown_output = NULL,
   pagetitle = NULL,
   pagesubtitle = NULL,
   skipfromstop = TRUE,
@@ -467,7 +490,9 @@ preprocess_codefile <- function(
   }
 
   # Strip empty start lines
-  while (length(code) > 0 && code[1] == "") code <- code[-1]
+  while (length(code) > 0 && code[1] == "") {
+    code <- code[-1]
+  }
 
   # Add line breaks
   for (x in seq_along(code)) {
@@ -496,7 +521,9 @@ preprocess_codefile <- function(
   }
 
   code <- code[!titleline]
-  if (length(pagetitle) == 0) stop("Page must have a title")
+  if (length(pagetitle) == 0) {
+    stop("Page must have a title")
+  }
 
   # Check for any tags
   taglines <- grepl("#' @", code, fixed = TRUE)
@@ -510,7 +537,9 @@ preprocess_codefile <- function(
     pagesubtitle <- trimws(substr(pagesubtitle, 4, nchar(pagesubtitle)))
   }
   code <- code[!subtitleline]
-  if (length(pagesubtitle) == 0) stop("Page must have a subtitle")
+  if (length(pagesubtitle) == 0) {
+    stop("Page must have a subtitle")
+  }
 
   # Replace lines starting with #'
   speciallines <- grepl("^#'", code)
@@ -618,28 +647,30 @@ preprocess_codefile <- function(
   }
 
   # Write to the markdown file
-  writeLines(
-    text = c(
-      "---",
-      paste0('title: "', pagetitle, '"'),
-      "---",
-      paste0("```{", language, "}"),
-      code,
-      chunk_end,
-      "</main>",
-      "<footer>",
-      codelink,
-      paste0(
-        "```{",
-        language,
-        " class.source='code-block page-code', eval=FALSE}"
+  if (!is.null(markdown_output)) {
+    writeLines(
+      text = c(
+        "---",
+        paste0('title: "', pagetitle, '"'),
+        "---",
+        paste0("```{", language, "}"),
+        code,
+        chunk_end,
+        "</main>",
+        "<footer>",
+        codelink,
+        paste0(
+          "```{",
+          language,
+          " class.source='code-block page-code', eval=FALSE}"
+        ),
+        readLines(code_file),
+        "```",
+        "</footer>"
       ),
-      readLines(code_file),
-      "```",
-      "</footer>"
-    ),
-    con = markdown_output
-  )
+      con = markdown_output
+    )
+  }
 
   # Return meta data
   list(
