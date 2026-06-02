@@ -14,13 +14,18 @@ labbook.init <- function(
   labbook.dirname = "labbook"
 ) {
   # Check args
-  if (missing(labbook.title)) stop("Please enter a name for the labbook")
-  if (missing(project.title)) stop("Please enter a name for the first project")
+  if (missing(labbook.title)) {
+    stop("Please enter a name for the labbook")
+  }
+  if (missing(project.title)) {
+    stop("Please enter a name for the first project")
+  }
 
   # Create the directory
   labbook.path <- file.path(labbook.dir, labbook.dirname)
-  if (file.exists(labbook.path))
+  if (file.exists(labbook.path)) {
     stop("A labbook directory already exists at this location")
+  }
   dir.create(labbook.path)
 
   # Copy the library folder
@@ -80,7 +85,9 @@ labbook.newProject <- function(
   labbook.path = "../../"
 ) {
   # Check args
-  if (is.null(project.dir)) project.dir <- make.safename(project.title)
+  if (is.null(project.dir)) {
+    project.dir <- make.safename(project.title)
+  }
 
   # Create the project dir
   project_path <- file.path(labbook.path, "projects", project.dir)
@@ -110,7 +117,9 @@ labbook.newProject <- function(
   )
 
   # Create the project
-  rstudioapi::initializeProject(project_path)
+  old_options <- options(usethis.allow_nested_project = TRUE)
+  on.exit(options(old_options), add = TRUE)
+  usethis::create_project(project_path)
 
   # Add a project section
   index_path <- file.path(project_path, "..", "..", "index.html")
@@ -169,7 +178,9 @@ labbook.newPage <- function(
   }
 
   # Open the new file
-  if (openfile) file.edit(filepath)
+  if (openfile) {
+    file.edit(filepath)
+  }
 
   # Return the file path silently
   invisible(filepath)
@@ -197,27 +208,51 @@ labbook_newpage <- function(openfile = TRUE) {
     return()
   }
   subtitle_index <- suppressWarnings(as.numeric(page_subtitle))
-  if (!is.na(subtitle_index)) page_subtitle <- subtitles[subtitle_index]
+  if (!is.na(subtitle_index)) {
+    page_subtitle <- subtitles[subtitle_index]
+  }
+
+  # Get page code language
+  code_language <- trimws(readline(
+    "Code language:\n1: R\n2: Python\nEnter number: "
+  ))
+  if (code_language == "1") {
+    code_language <- "R"
+  } else if (code_language == "2") {
+    code_language <- "Python"
+  } else {
+    stop("Invalid code language")
+  }
 
   # Write the page template
-  output <- c(
-    "",
-    paste("##'", page_subtitle),
-    paste("###'", page_title),
-    "",
-    "# Setup workspace",
-    "rm(list = ls())",
-    "library(labbook)",
-    ""
-  )
+  if (code_language == "R") {
+    output <- c(
+      paste("##'", page_subtitle),
+      paste("###'", page_title),
+      "",
+      "# Setup workspace",
+      "rm(list = ls())",
+      "library(labbook)",
+      ""
+    )
+    ext <- "r"
+  } else if (code_language == "Python") {
+    output <- c(
+      paste("##'", page_subtitle),
+      paste("###'", page_title),
+      ""
+    )
+    ext <- "py"
+  }
 
   # Create the file
-  filepath <- file.path("code", paste0(page_title_safe, ".R"))
+  filepath <- file.path("code", paste0(page_title_safe, ".", ext))
   writeLines(output, filepath)
 
   # Open the new file
-  if (openfile) file.edit(filepath)
-  # rstudioapi::navigateToFile(filepath)
+  if (openfile) {
+    file.edit(filepath)
+  }
 
   # Return the file path silently
   invisible(filepath)
@@ -250,12 +285,16 @@ labbook_merge_subtitles <- function(
 
   # Get the subtitle 1 node to move from
   titlenode1 <- getSubtitleNode(projectnode, subtitle_from)
-  if (length(titlenode1) == 0) stop("Subtitle not found")
+  if (length(titlenode1) == 0) {
+    stop("Subtitle not found")
+  }
   linknodes1 <- getSubtitleLinks(projectnode, subtitle_from)
 
   # Get the subtitle 2 node to move to
   titlenode2 <- getSubtitleNode(projectnode, subtitle_into)
-  if (length(titlenode2) == 0) stop("Subtitle not found")
+  if (length(titlenode2) == 0) {
+    stop("Subtitle not found")
+  }
   linknodes2 <- getSubtitleLinks(projectnode, subtitle_into)
 
   # Work out sibling node from the second subtitle
